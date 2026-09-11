@@ -105,6 +105,49 @@ def humanize(token):
     return token.replace("-", " ").replace("_", " ").strip().title()
 
 
+DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}")
+
+def clean_review_date(raw):
+    """121 of 125 cards have the literal placeholder text 'date' (2 say
+    'PLACEHOLDER: date') never replaced with a real value -- only 2 cards
+    have an actual ISO date. Treat anything that isn't a real date as
+    genuinely unreviewed rather than rendering 'Invalid Date' or a fake
+    reviewed-on label."""
+    if not raw or not DATE_RE.match(raw.strip()):
+        return None
+    return raw.strip()
+
+
+def clean_tag_list(raw):
+    """Condition/Procedure are internal kebab-case codes with the same
+    delimiter mess as System (backtick-lists, parenthetical asides) but
+    aren't human-display labels -- clean into a plain word list so they
+    contribute real search recall instead of noise (e.g. 'anterior-cord-
+    syndrome' -> 'anterior cord syndrome', matchable word-by-word)."""
+    if not raw:
+        return []
+    s = re.sub(r"\*?\([^)]*\)\*?", "", raw)
+    parts = re.split(r"`\s*,\s*`|`\s*\+\s*`|,|\+", s)
+    tags = []
+    for p in parts:
+        p = p.strip().strip("`").strip().replace("-", " ")
+        p = re.sub(r"\s+", " ", p)
+        if p and p not in tags:
+            tags.append(p)
+    return tags
+
+
+def clean_version(raw):
+    """8 cards have literal backticks ('`v2.3`'), 1 is missing the 'v'
+    prefix ('2.3') -- normalize to a bare number so callers can prefix
+    'v' consistently instead of baking it into the stored value."""
+    if not raw:
+        return None
+    v = raw.strip().strip("`").strip()
+    v = v[1:] if v.lower().startswith("v") else v
+    return v or None
+
+
 def clean_markdown_bold(text):
     """Strip leftover **bold** markdown from plain-text fields (QuickAnswer
     etc.) -- these were never run through the BodyHtml cleanup pipeline
@@ -171,13 +214,13 @@ def main():
             "acuity": c.get("cr577_acuity"),
             "system": system_tags,
             "phase": phase_labels,
-            "condition": c.get("cr577_condition"),
-            "procedure": c.get("cr577_procedure"),
+            "condition": clean_tag_list(c.get("cr577_condition")),
+            "procedure": clean_tag_list(c.get("cr577_procedure")),
             "quickAnswer": clean_markdown_bold(c.get("cr577_quickanswer")),
             "quickAnswerHtml": None,  # filled in below from the "Quick Answer" section, if present
             "keywords": keywords,
-            "version": c.get("cr577_version"),
-            "lastReviewed": c.get("cr577_lastreviewed"),
+            "version": clean_version(c.get("cr577_version")),
+            "lastReviewed": clean_review_date(c.get("cr577_lastreviewed")),
             "reviewer": c.get("cr577_reviewer"),
             "sourcePrecedence": c.get("cr577_sourceprecedence"),
             "sections": [],   # filled once CardSection.json is available
@@ -360,7 +403,9 @@ def main():
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=None, separators=(",", ":"))
 
+    real_dates = sum(1 for c in cards_by_slug.values() if c["lastReviewed"])
     print(f"cards: {len(cards_by_slug)}")
+    print(f"cards with a REAL last-reviewed date: {real_dates} / {len(cards_by_slug)} (rest were placeholder text, e.g. literally 'date')")
     print(f"references attached: {sum(len(c['references']) for c in cards_by_slug.values())}")
     print(f"related links resolved: {sum(len(c['related']) for c in cards_by_slug.values())}")
     print(f"related links UNRESOLVED (target card doesn't exist yet): {len(unresolved)}")
