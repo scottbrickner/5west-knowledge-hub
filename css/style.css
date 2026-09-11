@@ -179,6 +179,10 @@ button { font-family: inherit; cursor: pointer; }
 }
 @media (max-width: 860px) {
   .library-layout { grid-template-columns: 1fr; }
+  /* sticky only makes sense beside the grid in the 2-column layout --
+     stacked single-column it pins the sidebar in place while the results
+     below scroll underneath it, visually overlapping and eating clicks */
+  .facets { position: static; top: auto; }
 }
 
 .facets {
