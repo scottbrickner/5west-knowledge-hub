@@ -8,7 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <!-- cache-bust manually: bump ?v=N whenever style.css/app.js change --
+       caught live: GitHub Pages/CDN caching served a stale stylesheet to a
+       verification check even in a brand-new browser tab, while a direct
+       no-cache fetch of the same URL showed the current file. Real users
+       hitting the site after an update would hit the same staleness. -->
+  <link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
 
@@ -32,6 +37,6 @@
     <span>5 West Knowledge Hub — CTICU clinical reference · not a substitute for institutional policy or provider orders</span>
   </footer>
 
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=2"></script>
 </body>
 </html>
