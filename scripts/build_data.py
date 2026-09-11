@@ -28,6 +28,50 @@ HEART_FAILURE_OVERRIDES = {
     "RC00851": "hfpef_diagnosis",
 }
 
+CANONICAL_SYSTEM_MAP = {
+    "cardiac": "Cardiac", "cardiovascular": "Cardiac",
+    "pulmonary": "Pulmonary",
+    "neurologic": "Neurologic", "neurological": "Neurologic",
+    "renal": "Renal/FEN", "renal-fen": "Renal/FEN", "renal fen": "Renal/FEN",
+    "renal/fen": "Renal/FEN",
+    "renal-fenestration": "Renal/FEN", "renal fenestration": "Renal/FEN",  # autocorrect artifact
+    "renal-fluid-electrolyte": "Renal/FEN", "renal fluid electrolyte": "Renal/FEN",
+    "hematology": "Hematology",
+    "infectious": "Infectious", "infectious-disease": "Infectious", "infectious disease": "Infectious",
+    "endocrine": "Endocrine", "metabolic": "Endocrine",
+    "gi": "GI", "gastrointestinal": "GI", "hepatic": "GI",
+    "integumentary": "Integumentary",
+    "musculoskeletal": "Musculoskeletal",
+    "vascular": "Vascular",
+    "psych": "Psych", "pain": "Pain", "genetics": "Genetics",
+    "electrophysiology": "Electrophysiology", "pharmacy": "Pharmacy",
+    "cross-system": "Cross-System", "cross system": "Cross-System",
+}
+
+
+def clean_system(raw):
+    """Normalize the wildly inconsistent System field (mixed delimiters --
+    backtick-lists, plain commas, '+', parenthetical asides that are
+    sometimes a system breakdown and sometimes an unrelated clinical note,
+    a 'Fen'->'Fenestration' autocorrect artifact) into a small closed set of
+    canonical tags, validated against every unique raw value in the corpus
+    (17 tags, zero unmapped fallthrough) before wiring in."""
+    if not raw:
+        return []
+    s = re.sub(r"\*?\([^)]*\)\*?", "", raw)  # strip parenthetical asides entirely
+    parts = re.split(r"`\s*,\s*`|`\s*\+\s*`|,|\+", s)
+    tags = []
+    for p in parts:
+        p = p.strip().strip("`").strip().lower()
+        p = re.sub(r"\s+", " ", p)
+        if not p:
+            continue
+        canon = CANONICAL_SYSTEM_MAP.get(p, p.title())
+        if canon not in tags:
+            tags.append(canon)
+    return tags
+
+
 PHASE_LABELS = {
     "preop": "Pre-op",
     "postop": "Post-op",
@@ -111,7 +155,7 @@ def main():
             continue
         title = (c.get("cr577_title") or "").strip()
 
-        system_raw = clean_backtick_list(c.get("cr577_system"))
+        system_tags = clean_system(c.get("cr577_system"))
         phase_raw = clean_backtick_list(c.get("cr577_phase"))
         phase_labels = [PHASE_LABELS.get(p, humanize(p)) for p in phase_raw]
         phase_labels = [p for p in phase_labels if p]  # drop n-a/None
@@ -125,11 +169,12 @@ def main():
             "title": title,
             "type": c.get("cr577_type"),
             "acuity": c.get("cr577_acuity"),
-            "system": [humanize(s) for s in system_raw],
+            "system": system_tags,
             "phase": phase_labels,
             "condition": c.get("cr577_condition"),
             "procedure": c.get("cr577_procedure"),
             "quickAnswer": clean_markdown_bold(c.get("cr577_quickanswer")),
+            "quickAnswerHtml": None,  # filled in below from the "Quick Answer" section, if present
             "keywords": keywords,
             "version": c.get("cr577_version"),
             "lastReviewed": c.get("cr577_lastreviewed"),
@@ -163,6 +208,8 @@ def main():
     # --- card sections: structure from the fresh pull, body from the
     # already-cleaned local CSV (joined by SecCode -- ignore BodyHtml in the
     # fresh pull entirely, it's the dirty pre-August-cleanup version) ---
+    HEADING_NOTE_RE = re.compile(r"\s*\*?\(expandable(?: in app)?\)\*?\s*", re.IGNORECASE)
+
     sections_raw = load_json("CardSection.json")
     sections_by_card = {}
     missing_body = 0
@@ -171,13 +218,27 @@ def main():
         card_slug = s.get("cr577_cardlookup")
         if not seccode or not card_slug or card_slug not in cards_by_slug:
             continue
+        heading = (s.get("cr577_heading") or "").strip()
+
+        if heading == "Header Metadata":
+            continue  # internal authoring note (Title/Version/Status table), not clinical content
+
         body = section_html.get(seccode)
         if body is None:
             missing_body += 1
             continue
+
+        if heading == "Quick Answer":
+            # richer HTML-formatted version of the same text as Card.QuickAnswer
+            # (that one's the plain-text tile-preview version) -- surface this
+            # one as the detail-page callout instead of duplicating both
+            cards_by_slug[card_slug]["quickAnswerHtml"] = body
+            continue
+
+        heading_clean = HEADING_NOTE_RE.sub("", heading).strip()
         sections_by_card.setdefault(card_slug, []).append({
             "secCode": seccode,
-            "heading": s.get("cr577_heading"),
+            "heading": heading_clean,
             "level": s.get("cr577_level"),
             "sortOrder": s.get("cr577_sortorder"),
             "collapsible": (s.get("cr577_iscollapsible") or "").lower() == "yes",
