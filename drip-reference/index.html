@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>CTICU Drip Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Open+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: sticky pump-strip header (weight + search) · class filters · drug list | drug sheet with live dose⇄rate calculator · SAT/RASS panel · sources */
+:root{
+  --paper:#F7F5F2; --surface:#FFFFFF; --sunk:#EFEBE6; --ink:#262322; --muted:#6A625E; --line:#E2DCD6;
+  --cardinal:#990000; --cardinal-ink:#990000; --gold:#FFCC00; --gold-soft:#FFF4C2; --gold-ink:#6B5300;
+  --ok:#2F6E47; --ok-soft:#E3F0E7; --warn:#8A5A00; --warn-soft:#FBEFD6; --crit:#B3261E; --crit-soft:#FBE3E1;
+  --sel:#F6E9E9;
+  --display:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --r:6px; --calc-scheme:dark;
+  --up1:#F6E3E1; --up2:#EBBDB8; --up3:#D98A82; --up-ink:#7A0F0A; --dn1:#E3E9F2; --dn2:#BFCDE2; --dn3:#8FA7CB; --dn-ink:#1E3A66; --nil:#F1EEEA;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#171413; --surface:#211D1C; --sunk:#2A2524; --ink:#EEE8E3; --muted:#A99F99; --line:#3A3331;
+  --cardinal:#B01E1E; --cardinal-ink:#F08A84; --gold:#FFCC00; --gold-soft:#3A3113; --gold-ink:#FFD84D;
+  --ok:#7CC79A; --ok-soft:#1F3328; --warn:#F2C064; --warn-soft:#3A2E17; --crit:#FF8A80; --crit-soft:#3D1F1D;
+  --sel:#35211F; --calc-scheme:light; color-scheme:dark;
+  --up1:#3A2120; --up2:#5A2A27; --up3:#7E302B; --up-ink:#FFD2CD; --dn1:#1F2733; --dn2:#283A55; --dn3:#34507A; --dn-ink:#D4E2FA; --nil:#262120}}
+:root[data-theme="dark"]{
+  --paper:#171413; --surface:#211D1C; --sunk:#2A2524; --ink:#EEE8E3; --muted:#A99F99; --line:#3A3331;
+  --cardinal:#B01E1E; --cardinal-ink:#F08A84; --gold:#FFCC00; --gold-soft:#3A3113; --gold-ink:#FFD84D;
+  --ok:#7CC79A; --ok-soft:#1F3328; --warn:#F2C064; --warn-soft:#3A2E17; --crit:#FF8A80; --crit-soft:#3D1F1D;
+  --sel:#35211F; --calc-scheme:light; color-scheme:dark;
+  --up1:#3A2120; --up2:#5A2A27; --up3:#7E302B; --up-ink:#FFD2CD; --dn1:#1F2733; --dn2:#283A55; --dn3:#34507A; --dn-ink:#D4E2FA; --nil:#262120}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;border-left:4px solid var(--cardinal)}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:0 40px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--paper);border-bottom:1px solid var(--line)}
+.top-in{max-width:1240px;margin:0 auto;padding:14px 20px 12px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0;margin-right:auto}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cardinal-ink)}
+.brand h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.field{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:6px 10px}
+.field label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.field input{border:0;background:transparent;outline:none;width:64px}
+.field input.search{width:180px;font-family:var(--body)}
+.field .u{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.ex{font-size:11px;color:var(--gold-ink);background:var(--gold-soft);border-radius:4px;padding:1px 6px;font-weight:600}
+
+.filters{display:flex;gap:6px;flex-wrap:wrap;padding-block:14px 12px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip.jump{border-style:dashed}
+
+/* main grid */
+.grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
+.list{position:sticky;top:96px;max-height:calc(100vh - 116px);overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.grp{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 14px 4px;background:var(--surface)}
+.item{display:grid;grid-template-columns:1fr;gap:1px;width:100%;text-align:left;border:0;background:transparent;padding:8px 14px;cursor:pointer;border-left:3px solid transparent}
+.item:hover{background:var(--sunk)}
+.item[aria-current="true"]{background:var(--sel);border-left-color:var(--cardinal)}
+.item .n{font-weight:700;font-size:14px}
+.item .n span{font-weight:400;color:var(--muted)}
+.item .m{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.empty{padding:16px 14px;color:var(--muted);font-size:14px}
+
+/* sheet */
+.sheet{scroll-margin-top:100px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.head{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;justify-content:space-between}
+.head h2{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.head h2 small{font-size:16px;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:6px}
+.cls{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cardinal-ink);margin-bottom:4px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:12px;font-weight:600;border-radius:4px;padding:3px 8px;border:1px solid transparent;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.crit{background:var(--crit-soft);color:var(--crit)}
+.pill.info{background:var(--sunk);color:var(--ink)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.ptitle{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:12px 16px 0}
+
+/* formulary table */
+.spec{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0}
+.spec div{padding:12px 16px;border-top:1px solid var(--line);min-width:0}
+.spec dt{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.spec dd{margin:0;font-family:var(--mono);font-size:14px;font-weight:500;overflow-wrap:anywhere}
+.spec dd .sub{display:block;font-family:var(--body);font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+
+/* calculator: pump face */
+.calc{color-scheme:var(--calc-scheme);background:var(--ink);color:var(--paper);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:14px}
+:root .calc{--c-dim:color-mix(in srgb,var(--paper) 62%,transparent);--c-line:color-mix(in srgb,var(--paper) 18%,transparent)}
+.calc .ptitle{padding:0;color:var(--c-dim)}
+.crow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:end}
+.cbox label{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-dim);margin-bottom:4px}
+.cin{display:flex;align-items:baseline;gap:8px;border-bottom:2px solid var(--gold);padding-bottom:4px}
+.cin input{background:transparent;border:0;outline:none;color:var(--gold);font-family:var(--mono);font-size:32px;font-weight:600;width:100%;min-width:0;font-variant-numeric:tabular-nums}
+.cin .u{font-family:var(--mono);font-size:13px;color:var(--c-dim);white-space:nowrap}
+.swap{font-family:var(--mono);color:var(--c-dim);font-size:20px;padding-bottom:10px}
+.cmeta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--c-dim)}
+.cmeta select,.cmeta input{background:transparent;border:1px solid var(--c-line);border-radius:4px;padding:3px 6px;color:var(--paper)}
+.cmeta select option{color:#262322;background:#fff}
+.cmeta b{color:var(--paper);font-family:var(--mono);font-weight:500}
+.bar{position:relative;height:34px;margin-top:4px}
+.track{position:absolute;left:0;right:0;top:12px;height:8px;border-radius:4px;background:var(--c-line)}
+.fill{position:absolute;left:0;top:12px;height:8px;border-radius:4px;background:var(--gold)}
+.tick{position:absolute;top:6px;width:2px;height:20px;background:var(--paper);opacity:.7}
+.tick.lim{background:var(--gold);opacity:1}
+.tick span{position:absolute;top:22px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;color:var(--c-dim);font-family:var(--mono)}
+.tick.end span{left:auto;right:0;transform:none}
+.tick.start span{left:0;transform:none}
+.alerts{display:flex;flex-direction:column;gap:6px}
+.alert{font-size:13px;font-weight:600;border-radius:4px;padding:6px 10px}
+.alert.crit{background:#B3261E;color:#fff}
+.alert.warn{background:#FFCC00;color:#262322}
+.alert.info{background:var(--c-line);color:var(--paper)}
+.co{font-size:13px;color:var(--c-dim)}
+.co b{color:var(--gold);font-family:var(--mono);font-weight:600}
+
+/* two-col lower */
+.cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:18px;align-items:start}
+.cols > *{min-width:0}
+.ladder{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+.ladder th{font-family:var(--body);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right;padding:8px 16px;font-weight:700}
+.ladder th:first-child,.ladder td:first-child{text-align:left}
+.ladder td{padding:5px 16px;border-top:1px solid var(--line);text-align:right}
+.ladder tr.on td{background:var(--gold-soft);color:var(--gold-ink);font-weight:600}
+.ladder tr.limrow td:first-child::after{content:attr(data-lim);font-family:var(--body);font-size:11px;color:var(--muted);margin-left:8px}
+.lnote{font-size:12px;color:var(--muted);padding:8px 16px 12px}
+
+.rec{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px 16px 14px}
+.rc{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+.rc b{font-family:var(--mono);font-size:13px}
+.dots{display:flex;gap:3px}
+.dots i{width:12px;height:12px;border-radius:2px;background:var(--sunk);border:1px solid var(--line)}
+.dots i.f{background:var(--cardinal);border-color:var(--cardinal)}
+.mech{padding:10px 16px 14px;font-size:14px}
+.mech b{font-family:var(--mono)}
+
+ul.notes{margin:0;padding:8px 16px 14px 34px;display:flex;flex-direction:column;gap:7px;font-size:14px;max-width:72ch}
+ul.notes li::marker{color:var(--cardinal-ink)}
+.flag{border:1px solid var(--gold);background:var(--gold-soft);border-radius:var(--r);padding:12px 16px}
+.flag h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-ink);font-weight:800;margin-bottom:6px}
+.flag ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:14px}
+.monitor{padding:10px 16px 14px;font-size:14px;display:grid;gap:6px}
+.monitor b{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block}
+
+/* hemodynamic matrix */
+.hemo{margin-top:40px;scroll-margin-top:100px}
+.hemo > h2{font-size:24px;font-weight:800;margin-bottom:4px}
+.hemo > p{color:var(--muted);margin:0 0 12px;max-width:72ch}
+.hbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--muted);align-items:center}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-3px;margin-right:4px}
+.mx-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.mx{width:100%;border-collapse:collapse;min-width:740px}
+.mx th{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 8px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+.mx th:first-child{text-align:left;padding-left:14px}
+.mx th button{border:0;background:transparent;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;padding:2px 4px;border-radius:3px}
+.mx th button:hover{color:var(--ink)}
+.mx th button[aria-sort="descending"],.mx th button[aria-sort="ascending"]{color:var(--cardinal-ink)}
+.mx td{padding:3px;text-align:center;border-top:1px solid var(--line)}
+.mx td.nm{text-align:left;padding:6px 14px;white-space:nowrap}
+.mx td.nm button{border:0;background:transparent;font:inherit;font-weight:700;cursor:pointer;padding:0;text-align:left}
+.mx td.nm button:hover{color:var(--cardinal-ink);text-decoration:underline}
+.mx td.nm small{display:block;font-size:11px;color:var(--muted);font-weight:400}
+.mx tr.grp td{background:var(--sunk);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 14px}
+.mx tr.cur td.nm{box-shadow:inset 3px 0 0 var(--cardinal)}
+.cell{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:44px;border-radius:4px;padding:4px 6px;font-family:var(--mono);font-size:15px;font-weight:600;line-height:1.1}
+.cell small{font-family:var(--body);font-size:10.5px;font-weight:500;opacity:.85;margin-top:2px;white-space:nowrap}
+.cell.u1{background:var(--up1);color:var(--up-ink)} .cell.u2{background:var(--up2);color:var(--up-ink)} .cell.u3{background:var(--up3);color:var(--up-ink)}
+.cell.d1{background:var(--dn1);color:var(--dn-ink)} .cell.d2{background:var(--dn2);color:var(--dn-ink)} .cell.d3{background:var(--dn3);color:var(--dn-ink)}
+.cell.z{background:var(--nil);color:var(--muted)}
+.cell.var{background:linear-gradient(90deg,var(--dn1),var(--up2));color:var(--ink)}
+.hstrip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:10px 12px 12px}
+.hstrip div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.hstrip b{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:center}
+.hstrip .cell{min-height:40px;font-size:14px}
+.hstrip .cell small{white-space:normal;text-align:center}
+
+/* SAT / RASS */
+.sat{margin-top:40px;scroll-margin-top:100px}
+.sat > h2{font-size:24px;font-weight:800;margin-bottom:4px}
+.sat > p{color:var(--muted);margin:0 0 16px;max-width:72ch}
+.satgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.satgrid > *{min-width:0}
+.rass{width:100%;border-collapse:collapse;font-size:14px}
+.rass td{padding:7px 16px;border-top:1px solid var(--line);vertical-align:top}
+.rass td:first-child{font-family:var(--mono);font-weight:600;width:52px;text-align:right}
+.rass td b{display:block}
+.rass td span{color:var(--muted);font-size:13px}
+.rass tr.tgt td{background:var(--ok-soft)}
+.rass tr.tgt td:first-child{color:var(--ok)}
+.checks{display:flex;flex-direction:column;padding:6px 8px 10px}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:6px 8px;border-radius:4px;cursor:pointer;font-size:14px}
+.checks label:hover{background:var(--sunk)}
+.checks input{margin-top:4px;accent-color:var(--cardinal)}
+.verdict{margin:0 16px 14px;padding:10px 12px;border-radius:4px;font-weight:700;font-size:14px}
+.verdict.go{background:var(--ok-soft);color:var(--ok)}
+.verdict.stop{background:var(--crit-soft);color:var(--crit)}
+.steps{margin:0;padding:8px 16px 14px 34px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:grid;gap:8px;max-width:90ch}
+footer b{color:var(--ink)}
+
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .list{position:static;max-height:280px}
+  .cols,.satgrid{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .hstrip{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .wrap{padding-inline:16px}
+  .top-in{padding-inline:16px}
+  .brand h1{font-size:19px}
+  .field input.search{width:120px}
+  .crow{grid-template-columns:1fr}
+  .swap{display:none}
+  .cin input{font-size:28px}
+  .head h2{font-size:25px}
+  .rec{grid-template-columns:repeat(3,1fr)}
+}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .2s ease}}
+</style>
+<style>body{margin:0} [hidden]{display:none!important} img{max-width:100%}</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <span class="eyebrow">Keck Medicine of USC · CTICU</span>
+      <h1>CTICU Drip Reference</h1>
+    </div>
+    <div class="ctrl">
+      <div class="field">
+        <label for="wt">Dosing wt</label>
+        <input id="wt" class="mono" type="number" inputmode="decimal" min="1" max="400" step="0.1" value="80">
+        <span class="u">kg</span>
+        <span class="ex" id="wtEx">example</span>
+      </div>
+      <div class="field">
+        <label for="q">Find</label>
+        <input id="q" class="search" type="search" placeholder="drug or brand">
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="filters" id="filters" aria-label="Drug class"></nav>
+  <div class="grid">
+    <nav class="list" id="list" aria-label="Drugs"></nav>
+    <article class="sheet" id="sheet" aria-live="polite"></article>
+  </div>
+
+  <section class="hemo" id="hemo">
+    <div class="eyebrow">Vasoactives and sedatives side by side</div>
+    <h2>Hemodynamic effects at a glance</h2>
+    <p>Typical direction and size of each effect at usual ICU doses. Real response depends on dose, volume status and LV/RV function. Click a column to sort, or a drug name to open its sheet.</p>
+    <div class="hbar">
+      <div class="filters" id="mxFilters" style="padding:0" aria-label="Matrix class"></div>
+      <div class="legend"><span><i style="background:var(--up3)"></i>increase</span><span><i style="background:var(--dn3)"></i>decrease</span><span><i style="background:var(--nil);border:1px solid var(--line)"></i>little or none</span><span><i style="background:linear-gradient(90deg,var(--dn1),var(--up2))"></i>dose-dependent</span><span class="mono">↑ mild · ↑↑ moderate · ↑↑↑ marked</span></div>
+    </div>
+    <div class="mx-wrap"><table class="mx" id="mx"></table></div>
+  </section>
+
+  <section class="sat" id="sat">
+    <div class="eyebrow">Sedation practice · CP 3-162</div>
+    <h2>SAT screen and RASS</h2>
+    <p>Every morning, each ventilated patient gets an SAT safety screen from the RN. Sedatives come off for the SAT. Analgesics stay on at the lowest effective dose unless a provider orders otherwise.</p>
+    <div class="satgrid">
+      <div class="panel">
+        <div class="ptitle">SAT safety screen · any check = do not proceed</div>
+        <div class="checks" id="satChecks"></div>
+        <div class="verdict go" id="satVerdict">No exclusions checked. Proceed with SAT: turn off sedatives.</div>
+        <div class="ptitle">During the SAT</div>
+        <ol class="steps">
+          <li>Record RASS, neuro status and hemodynamics before stopping sedation, at 15 min, then every 30 min and PRN.</li>
+          <li>Patient must be awake and follow at least one command (e.g., hold up two fingers) to pass.</li>
+          <li><b>Fail if:</b> RASS &gt; +2 for ≥ 5 min · SpO₂ &lt; 88% for ≥ 5 min · RR &gt; 35 for ≥ 5 min · new arrhythmia · ICP ≥ 20 mmHg · 2 or more signs of respiratory distress (accessory muscles, abdominal paradox, diaphoresis, dyspnea).</li>
+          <li><b>On failure:</b> restart sedation at <b>half the prior dose</b>, titrate to the ordered RASS goal, and reattempt tomorrow.</li>
+          <li><b>On pass:</b> hand off to the RCP for the SBT screen immediately.</li>
+        </ol>
+      </div>
+      <div class="panel">
+        <div class="ptitle">Richmond Agitation-Sedation Scale</div>
+        <table class="rass" id="rass"></table>
+        <div class="lnote">Shaded rows mark the light-sedation target (0 to −2) unless the order sets a different goal.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div><b>Sources.</b> CP 4-156 Attachment B, IV Infusion Titration (reviewed 6/23/2022): concentrations, boluses, initial rates, titration, maximums. CP 4-156 Attachment A, IV Therapy Administration (revised 10/23/2025): unit restrictions, peripheral criteria, handling. CP 3-606 Ketamine/Fentanyl Infusion (rev. 2/26/2024). CP 3-609 Ketamine Infusion (rev. 7/17/2025). CP 3-162 Awakening and Breathing Trials.</div>
+    <div><b>Use.</b> Education reference only. The provider order and the smart-pump drug library govern every infusion. ICU content only; stepdown and telemetry rules are not shown. Where Attachments A and B differed, the Attachment B values were adopted after educator review (9/29/2026). Attachment B has not been re-reviewed since 2022, so verify against current PolicyStat.</div>
+  </footer>
+</main>
+
+<script>
+const PERIPH = "IV ≥ 20 g, < 24 h old, at or above the forearm, good blood return; site visible and checked every 2 h; awake patient told to report pain; RN re-assesses criteria each shift.";
+const D = [
+/* ─────────── VASOPRESSORS ─────────── */
+{id:"norepi",name:"Norepinephrine",brand:"Levophed",cls:["pressor"],tag:"Vasopressor",unit:"mcg/min",
+ conc:[{label:"8 mg / 250 mL",per:32,show:"32 mcg/mL"}],
+ bolus:"None",initial:0.5,step:0.5,interval:"every 3–5 min",max:30,
+ limits:[{v:15,l:"Periph max"}],
+ where:[["ICU","ok"],["Peripheral OK ≤ 24 h","ok"]],
+ rec:{a1:3,b1:2,b2:0,d:0,v1:0},
+ monitor:"BP, HR. Site checks if peripheral.",adverse:"Extravasation leading to necrosis, headache, N/V, tachycardia, HTN, arrhythmias, urinary retention.",
+ pearls:["First-line pressor for post-CPB vasoplegia and most distributive hypotension.","Keck doses norepinephrine in <b>mcg/min, not mcg/kg/min</b>. Literature doses don't transfer: 0.1 mcg/kg/min in an 80 kg patient is 8 mcg/min.","Mild β1 support keeps cardiac output from falling the way it can with pure α agents."],
+ policy:["Peripheral (no central access): 32 mcg/mL for up to 24 h, max 15 mcg/min. "+PERIPH],
+ flags:[]},
+{id:"vaso",name:"Vasopressin",brand:"Pitressin",cls:["pressor"],tag:"Vasopressor · non-catecholamine",unit:"units/min",
+ conc:[{label:"40 units / 100 mL",per:0.4,show:"0.4 units/mL"}],
+ bolus:"Pulseless VT/VF: 40 units IV",initial:0.02,step:0.01,interval:"interval not specified",max:0.04,
+ limits:[{v:0.02,l:"Periph max"}],
+ where:[["ICU","ok"],["Peripheral OK ≤ 24 h","ok"],["Vesicant","crit"]],
+ rec:{a1:0,b1:0,b2:0,d:0,v1:3},
+ monitor:"BP, serum and urine sodium, I&O, urine specific gravity, serum and urine osmolality.",adverse:"Hypertension, ventricular arrhythmias, angina, tremor, diaphoresis.",
+ pearls:["Titratable at Keck (0.02 → 0.04 by 0.01), not the fixed 0.04 some references describe.","Works through V1 receptors, so it still constricts when acidosis blunts catecholamine response. Usual second agent in vasoplegia to spare norepinephrine.","No inotropy. Watch digits, gut and sodium as the dose climbs.","Shock dosing shown. GI-hemorrhage dosing (0.2–0.8 units/min) is a separate indication."],
+ policy:["Peripheral: 0.4 units/mL for up to 24 h, max 0.02 units/min. "+PERIPH],
+ flags:[]},
+{id:"epi",name:"Epinephrine",brand:"Adrenalin",cls:["pressor","inotrope"],tag:"Vasopressor · inotrope",unit:"mcg/min",
+ conc:[{label:"8 mg / 250 mL",per:32,show:"32 mcg/mL"}],
+ bolus:"Arrest: 1 mg every 3–5 min",initial:1,step:1,interval:"interval not specified",max:20,
+ limits:[],
+ where:[["ICU only","ok"],["Central line","crit"],["Vesicant","crit"]],
+ rec:{a1:2,b1:3,b2:2,d:0,v1:0},
+ monitor:"HR, BP, extravasation.",adverse:"HTN, tachycardia, arrhythmias, headache, N/V.",
+ pearls:["Low doses are mostly β (inotropy, chronotropy). α vasoconstriction takes over as the dose rises.","Lactate often climbs from β2-driven glycolysis. Trend it against perfusion (UOP, mentation, cap refill) before blaming hypoperfusion.","Expect hyperglycemia and tachyarrhythmia, including new post-op AF."],
+ policy:["ICU only. Administer via central line."],
+ flags:[]},
+{id:"phenyl",name:"Phenylephrine",brand:"Neo-Synephrine",cls:["pressor"],tag:"Vasopressor · pure α1",unit:"mcg/min",
+ conc:[{label:"40 mg / 250 mL",per:160,show:"160 mcg/mL"}],
+ bolus:"50–100 mcg IV push (provider present)",initial:50,step:25,interval:"every 5 min",max:200,
+ limits:[{v:100,l:"Periph max"}],
+ where:[["ICU only","ok"],["Peripheral OK ≤ 24 h","ok"],["Vesicant","crit"]],
+ rec:{a1:3,b1:0,b2:0,d:0,v1:0},
+ monitor:"BP.",adverse:"Hypertension, impaired myocardial perfusion, reflex bradycardia.",
+ pearls:["Raises afterload with no inotropy, so cardiac output can fall in a weak LV.","The pressor of choice for dynamic LVOT obstruction or SAM after mitral repair or myectomy, with volume and no inotropes.","Reflex bradycardia is expected. Check the pacer settings if the rate drops."],
+ policy:["IV push requires provider present.","Peripheral: 0.16 mg/mL for up to 24 h, max 100 mcg/min. "+PERIPH],
+ flags:[]},
+{id:"angio",name:"Angiotensin II",brand:"Giapreza",cls:["pressor"],tag:"Vasopressor · restricted",unit:"ng/kg/min",
+ conc:[{label:"2.5 mg / 500 mL NS",per:5000,show:"5,000 ng/mL"}],
+ bolus:"None",initial:10,step:15,interval:"every 5 min",max:80,
+ limits:[{v:40,l:"Max after 3 h"}],
+ where:[["ICU only","ok"],["Central line","crit"],["NS only","info"],["Restricted: 3rd line","warn"]],
+ mech:"<b>AT1</b> receptor agonist. Raises SVR through the renin-angiotensin pathway, separate from catecholamine and vasopressin receptors.",
+ monitor:"BP. Confirm VTE prophylaxis.",adverse:"Thrombosis, delirium, thrombocytopenia, fungal infections.",
+ pearls:["Reserved for refractory vasoplegia after norepinephrine and a second pressor.","Thrombosis is the headline risk. Confirm DVT prophylaxis is ordered."],
+ policy:["Restricted formulary: patient must already be on norepinephrine and another vasopressor at equivalent dose.","Dilute in NS only (5,000–10,000 ng/mL). Central line. Max 80 ng/kg/min in the first 3 h, then 40 ng/kg/min maintenance."],
+ flags:[]},
+{id:"dopa",name:"Dopamine",brand:"Intropin",cls:["pressor","inotrope"],tag:"Vasopressor · inotrope",unit:"mcg/kg/min",
+ conc:[{label:"800 mg / 250 mL",per:3200,show:"3,200 mcg/mL"}],
+ bolus:"None",initial:2,step:1,interval:"every 10 min",max:20,
+ limits:[{v:5,l:"Periph max"}],
+ where:[["ICU","ok"],["Peripheral OK ≤ 24 h","ok"],["Vesicant","crit"]],
+ rec:{a1:2,b1:2,b2:1,d:3,v1:0},
+ monitor:"EKG, HR, BP, urine output.",adverse:"HTN, arrhythmias, hypotension, angina, N/V, headache.",
+ pearls:["Rarely first choice in CTICU. More arrhythmia than norepinephrine for the same pressure.","Effects shift with dose: dopaminergic low, β1 middle, α1 high. The shifts are unpredictable between patients.","Low-dose dopamine does not protect the kidneys."],
+ policy:["Peripheral: 3.2 mg/mL for up to 24 h, max 5 mcg/kg/min. "+PERIPH],
+ flags:[]},
+/* ─────────── INOTROPES ─────────── */
+{id:"milri",name:"Milrinone",brand:"Primacor",cls:["inotrope"],tag:"Inodilator",unit:"mcg/kg/min",
+ conc:[{label:"20 mg / 100 mL",per:200,show:"200 mcg/mL"}],
+ bolus:"50 mcg/kg over 10 min",initial:0.25,step:null,nstep:0.125,interval:"no titration interval listed",max:1,
+ ladder:[0.25,0.375,0.5,0.6,0.75,1],
+ limits:[],
+ where:[["ICU","ok"],["Central preferred","warn"]],
+ mech:"<b>PDE-3</b> inhibitor. Raises cAMP without β receptors: inotropy plus systemic and pulmonary vasodilation.",
+ monitor:"BP; PCWP, RAP, CI.",adverse:"Ventricular and supraventricular arrhythmias, hypotension, headache.",
+ pearls:["Unloads the RV by dropping PVR. Often paired with norepinephrine to hold MAP.","Renally cleared with a half-life of hours. It accumulates in AKI and hypotension can outlast stopping the drip.","The bolus is often skipped because it drops BP. Follow the order.","Works when β receptors are down-regulated or blocked."],
+ policy:["Avoid extravasation; central line preferred."],
+ flags:[]},
+{id:"dobut",name:"Dobutamine",brand:"Dobutrex",cls:["inotrope"],tag:"Inotrope",unit:"mcg/kg/min",
+ conc:[{label:"1,000 mg / 250 mL",per:4000,show:"4,000 mcg/mL"}],
+ bolus:"None",initial:2.5,step:2.5,interval:"every 3 min",max:40,
+ limits:[],
+ where:[["ICU","ok"],["Central line","crit"],["Vesicant","crit"]],
+ rec:{a1:1,b1:3,b2:1,d:0,v1:0},
+ monitor:"BP, EKG, HR.",adverse:"Arrhythmias, HTN, ectopy, angina, N/V, headache, VT.",
+ pearls:["β2 effect lowers SVR. If BP falls, add a pressor; more dobutamine won't bring it back.","Avoid in dynamic LVOT obstruction: more contractility worsens the gradient.","Incompatible with sodium bicarbonate in the same line."],
+ policy:["Vesicant; infuse via central line."],
+ flags:[]},
+{id:"iso",name:"Isoproterenol",brand:"Isuprel",cls:["inotrope"],tag:"Chronotrope · inotrope",unit:"mcg/min",
+ conc:[{label:"2 mg / 250 mL",per:8,show:"8 mcg/mL"}],
+ bolus:"None",initial:2,step:1,interval:"every 15 min",max:10,
+ limits:[],
+ where:[["ICU only","ok"],["Central line","crit"]],
+ rec:{a1:0,b1:3,b2:3,d:0,v1:0},
+ monitor:"EKG, HR, RR, BP.",adverse:"Arrhythmia, hypotension, tachycardia, headache, anxiety, angina, dizziness.",
+ pearls:["Drives rate when epicardial pacing isn't available or isn't capturing.","β2 vasodilation lowers diastolic pressure, which can cut coronary perfusion.","Also lowers PVR."],
+ policy:["ICU only. Avoid extravasation; administer via central line."],
+ flags:[]},
+/* ─────────── VASODILATORS / BP ─────────── */
+{id:"nicard",name:"Nicardipine",brand:"Cardene",cls:["bp"],tag:"Calcium channel blocker",unit:"mg/hr",
+ conc:[{label:"20 mg / 200 mL (peripheral)",per:0.1,show:"0.1 mg/mL"},{label:"50 mg / 100 mL (central)",per:0.5,show:"0.5 mg/mL"}],
+ bolus:"None",initial:5,step:1,interval:"every 5 min",max:15,
+ limits:[],
+ where:[["ICU","ok"],["Peripheral: 0.1 mg/mL","ok"]],
+ mech:"Dihydropyridine <b>L-type calcium channel</b> blocker. Arterial vasodilation with no negative inotropy.",
+ monitor:"BP every 5–15 min after a change, HR, peripheral edema.",adverse:"Flushing, palpitations, tachycardia, peripheral edema, angina, headache, dizziness.",
+ pearls:["Common post-op choice to keep SBP under the surgeon's ceiling and protect suture lines.","Offset takes hours after a long infusion, much slower than clevidipine.","Reflex tachycardia can matter in ischemia."],
+ policy:["Peripheral concentration is 0.1 mg/mL (20 mg/200 mL). Central is 0.5 mg/mL (50 mg/100 mL).","Monitor BP every 5–15 min after a bolus or rate change."],
+ flags:[]},
+{id:"clevi",name:"Clevidipine",brand:"Cleviprex",cls:["bp"],tag:"Calcium channel blocker · lipid emulsion",unit:"mg/hr",
+ conc:[{label:"25 mg / 50 mL",per:0.5,show:"0.5 mg/mL"}],
+ bolus:"None",initial:1,step:1,interval:"every 5 min; every 5–10 min near goal",max:21,
+ limits:[],
+ where:[["ICU","ok"],["12 h hang time","warn"]],
+ mech:"Dihydropyridine <b>L-type calcium channel</b> blocker, cleared by blood esterases. Half-life about 1 minute.",
+ monitor:"BP, HR, rhythm. Continuous automatic BP.",adverse:"Hypotension, reflex tachycardia, nausea, AF, fever.",
+ pearls:["Fastest on and off of the BP drips. Stopping it reverses the effect within minutes.","Lipid emulsion. Avoid in soy or egg allergy and disordered lipid metabolism; count it with propofol toward the lipid load.","Maximum duration 72 h."],
+ policy:["Use within 12 h of puncturing the stopper; discard the rest. Change tubing every 12 h and with every new bottle.","Continuous automatic BP monitoring."],
+ flags:[]},
+{id:"ntg",name:"Nitroglycerin",brand:"Tridil",cls:["bp"],tag:"Venodilator · nitrate",unit:"mcg/min",
+ conc:[{label:"50 mg / 250 mL",per:200,show:"200 mcg/mL"}],
+ bolus:"None",initial:5,step:5,interval:"every 3–5 min",max:200,
+ limits:[],
+ where:[["ICU","ok"],["NTG tubing","info"]],
+ mech:"<b>Nitric oxide</b> donor. Venous dilation at low dose (preload), arterial and coronary dilation as the dose rises.",
+ monitor:"BP, HR.",adverse:"Hypotension, headache, dizziness, N/V, syncope.",
+ pearls:["Usual range 5–20 mcg/min.","After CABG, vasodilator prophylaxis is for <b>arterial conduits</b> (radial above all). Vein grafts don't spasm and get no protection from NTG.","Tolerance develops within a day of continuous infusion."],
+ policy:["Dedicated nitroglycerin tubing required."],
+ flags:[]},
+{id:"esmolol",name:"Esmolol",brand:"Brevibloc",cls:["bp"],tag:"β1-selective blocker",unit:"mcg/kg/min",
+ conc:[{label:"2,500 mg / 250 mL (peripheral)",per:10000,show:"10 mg/mL"},{label:"2,000 mg / 100 mL (central)",per:20000,show:"20 mg/mL"},{label:"5 g / 250 mL (central)",per:20000,show:"20 mg/mL"}],
+ bolus:"0.5 mg/kg over 1 min",initial:50,step:50,interval:"every 4 min",max:300,
+ limits:[],
+ where:[["ICU","ok"]],
+ rec:{a1:0,b1:-3,b2:0,d:0,v1:0},
+ monitor:"BP, HR, MAP, EKG, RR.",adverse:"Hypotension, bradycardia, nausea.",
+ pearls:["Impulse control in aortic dissection: β-blockade goes on <b>before</b> any vasodilator to avoid reflex tachycardia.","Half-life about 9 minutes, so it's easy to back off.","Know the pacer settings before titrating in a fresh post-op heart."],
+ policy:["Attachment A: load 500 mcg/kg/min over 1 min, start at 50 mcg/kg/min, and re-load with each titration up. (500 mcg/kg/min × 1 min is the same 0.5 mg/kg bolus.)"],
+ flags:[]},
+{id:"nipride",name:"Nitroprusside",brand:"Nipride",cls:["bp"],tag:"Arterial + venous dilator",unit:"mcg/kg/min",
+ conc:[{label:"50 mg / 250 mL",per:200,show:"200 mcg/mL"}],
+ bolus:"None",initial:0.5,step:0.5,interval:"every 3–5 min",max:2,
+ limits:[],
+ where:[["ICU only","ok"],["A-line","info"],["Protect from light","warn"],["Central preferred","warn"]],
+ mech:"<b>Nitric oxide</b> donor acting on arterial and venous smooth muscle. Onset and offset in minutes.",
+ monitor:"BP, HR, cyanide and thiocyanate toxicity, acid-base.",adverse:"Hypotension, palpitations, headache, psychosis, N/V.",
+ pearls:["Rising lactate, metabolic acidosis or sudden tachyphylaxis suggests cyanide toxicity.","Thiocyanate builds up in renal failure.","Can cause coronary steal in ischemia."],
+ policy:["Recommended max 2 mcg/kg/min. Up to 10 mcg/kg/min for no more than 10 minutes.","Continuous automatic BP. Light-protective cover. Central line preferred."],
+ flags:[]},
+{id:"labet",name:"Labetalol",brand:"Trandate",cls:["bp"],tag:"α1 + β blocker",unit:"mg/min",
+ conc:[{label:"200 mg / 100 mL",per:2,show:"2 mg/mL"}],
+ bolus:"20 mg over 2 min (B); 5–20 mg, then 5–40 mg every 5–10 min, max 80 mg/dose (A)",initial:0.5,step:0.5,interval:"every 10 min",max:3,
+ limits:[],
+ where:[["ICU","ok"]],
+ rec:{a1:-1,b1:-3,b2:-2,d:0,v1:0},
+ monitor:"BP, HR, MAP, EKG, RR.",adverse:"Hypotension, bradycardia, nausea, bronchospasm.",
+ pearls:["β effect outweighs α (about 7:1 IV).","Duration is hours, so it is much less titratable than esmolol."],
+ policy:["IV push: 20 mg or fraction over at least 2 min; may give undiluted.","Monitor BP closely after each push or rate change."],
+ flags:[]},
+/* ─────────── SEDATION ─────────── */
+{id:"propofol",name:"Propofol",brand:"Diprivan",cls:["sedation"],tag:"Sedative-hypnotic",unit:"mcg/kg/min",
+ conc:[{label:"1,000 mg / 100 mL",per:10000,show:"10 mg/mL"}],
+ bolus:"None (RN)",initial:5,step:5,interval:"every 5–10 min to RASS goal",max:100,
+ limits:[{v:67,l:"PRIS risk"}],
+ where:[["ICU, ventilated","ok"],["Tubing q12 h","warn"],["No filter < 5 µm","info"]],
+ mech:"<b>GABA-A</b> potentiation. Rapid on and off; no analgesia.",
+ monitor:"BP, triglycerides, RASS. Baseline lactate, CK and triglycerides, then every 3 days.",adverse:"Hypotension, apnea, injection-site pain.",
+ pearls:["Vasodilation plus mild negative inotropy. Often why pressor needs rise right after arrival from the OR.","Clears fast enough to support early extubation.","PRIS risk rises above 67 mcg/kg/min or beyond 48 h. Use the lowest dose and shortest course that works.","Lipid emulsion. Count it with clevidipine and any lipid feeds."],
+ policy:["Mechanically ventilated patients only. May continue after extubation for compassionate comfort care. Non-ventilated use requires an anesthesia provider present.","Strict aseptic technique. Change tubing every 12 h and with every new bottle.","Turned off during the SAT."],
+ flags:[]},
+{id:"dex",name:"Dexmedetomidine",brand:"Precedex",cls:["sedation"],tag:"α2 agonist",unit:"mcg/kg/hr",
+ conc:[{label:"200 mcg / 250 mL NS",per:0.8,show:"0.8 mcg/mL"}],
+ bolus:"1 mcg/kg over 10 min. May omit if converting from another sedative or hemodynamics are a concern.",initial:0.2,step:0.1,interval:"every 30 min to RASS goal",max:0.7,
+ limits:[],
+ where:[["ICU only","ok"],["NS only","info"]],
+ mech:"Central <b>α2</b> agonist. Cooperative sedation without respiratory depression.",
+ monitor:"RASS, HR, RR, rhythm.",adverse:"Hypotension, nausea, bradycardia, AF, hypoxia.",
+ pearls:["Can run through extubation because it doesn't depress breathing.","Bradycardia and heart block happen. Know the pacer wire status before starting.","The load can cause transient hypertension before the drop.","Not amnestic. Less delirium than benzodiazepines."],
+ policy:["ICU only. Dilute in NS only.","Turned off during the SAT."],
+ flags:[]},
+{id:"midaz",name:"Midazolam",brand:"Versed",cls:["sedation"],tag:"Benzodiazepine",unit:"mg/hr",
+ conc:[{label:"100 mg / 100 mL",per:1,show:"1 mg/mL"}],
+ bolus:"0.01–0.05 mg/kg, may repeat every 5–10 min",initial:1,step:1,interval:"every 15 min to RASS goal",max:20,
+ limits:[],
+ where:[["ICU","ok"]],
+ mech:"<b>GABA-A</b> benzodiazepine site. Sedation, amnesia, anxiolysis; no analgesia.",
+ monitor:"Respiratory and cardiovascular status, BP, RASS.",adverse:"Hypotension, respiratory depression, oversedation, anterograde amnesia, dependence.",
+ pearls:["Accumulates with prolonged infusion, especially with renal or hepatic dysfunction (active metabolite).","Associated with more delirium than propofol or dexmedetomidine.","Turned off during the SAT."],
+ policy:["Give IV push slowly over 2 min."],
+ flags:[]},
+{id:"loraz",name:"Lorazepam",brand:"Ativan",cls:["sedation"],tag:"Benzodiazepine",unit:"mg/hr",
+ conc:[{label:"60 mg / 60 mL",per:1,show:"1 mg/mL"}],
+ bolus:"Status epilepticus: 0.05–0.15 mg/kg (max 4 mg) over 2 min",initial:1,step:1,interval:"every 30 min to RASS goal",max:4,
+ limits:[],
+ where:[["ICU","ok"]],
+ mech:"<b>GABA-A</b> benzodiazepine site. Longer acting than midazolam.",
+ monitor:"Respiratory and cardiovascular status, BP, RASS.",adverse:"Hypotension, respiratory depression, oversedation, anterograde amnesia, dependence.",
+ pearls:["Propylene glycol diluent. High or prolonged dosing can cause an osmolar gap and metabolic acidosis.","Rarely the sedation infusion of choice after cardiac surgery."],
+ policy:["Dilute IV push with an equal volume; max 2 mg/min."],
+ flags:[]},
+/* ─────────── ANALGESIA ─────────── */
+{id:"fent",name:"Fentanyl",brand:"Sublimaze",cls:["analgesia"],tag:"Opioid",unit:"mcg/hr",
+ conc:[{label:"1,000 mcg / 100 mL",per:10,show:"10 mcg/mL"}],
+ bolus:"25–100 mcg over 1 min",initial:25,step:10,interval:"every 10 min by pain score",max:150,
+ limits:[],
+ where:[["ICU","ok"]],
+ mech:"<b>μ-opioid</b> agonist. Fast onset, minimal histamine release, hemodynamically quiet.",
+ monitor:"Respiratory and cardiovascular status, BP, HR, pain score (CPOT if intubated).",adverse:"Bradycardia, hypotension, sedation, raised ICP, N/V, constipation, respiratory and CNS depression.",
+ pearls:["Analgesia first: treat pain before adding sedative.","Stays on during the SAT at the lowest effective dose. Holding it requires a provider order.","Lipophilic. Prolonged infusions build up and wear off slowly.","The 150 mcg/hr max varies with tolerance and is limited by respiratory depression."],
+ policy:["Starting rate shown is for ventilated patients."],
+ flags:[]},
+{id:"hydro",name:"Hydromorphone",brand:"Dilaudid",cls:["analgesia"],tag:"Opioid",unit:"mg/hr",
+ conc:[{label:"Enter concentration",custom:true,per:null,show:"—"}],
+ bolus:"IV push: each 2 mg or fraction over 2–5 min; don't dilute further",initial:null,step:null,interval:"not listed",max:null,
+ limits:[],
+ where:[["ICU","ok"],["No standard conc.","warn"]],
+ mech:"<b>μ-opioid</b> agonist, roughly 5–7× morphine by IV weight.",
+ monitor:"Vital signs, especially respirations. Sedation level.",adverse:"Respiratory depression, sedation, hypotension, pruritus, constipation.",
+ pearls:["Continuous infusions are less common in CTICU than fentanyl. More often used as IV-push rescue."],
+ policy:["Attachment A allows IV push and continuous infusion."],
+ flags:[],note:"No standard concentration, starting rate, titration or maximum is listed in CP 4-156. Enter the concentration from the bag label to use the calculator."},
+{id:"ket",name:"Ketamine",brand:"CP 3-609",cls:["analgesia"],tag:"NMDA antagonist · analgesic infusion",unit:"mg/kg/hr",
+ conc:[{label:"Enter concentration",custom:true,per:null,show:"—"}],
+ bolus:"RN may not bolus. IV push by provider at bedside only.",initial:0.05,step:0.05,interval:"no RN titration; order for each change",max:1,
+ limits:[{v:0.2,l:"Top of start"}],
+ where:[["ICU","ok"],["No standard conc.","warn"],["No titration","warn"],["2-RN check","info"],["Lockbox","info"]],
+ mech:"<b>NMDA</b> receptor antagonist. Blocks central sensitization (\"wind-up\"); opioid-sparing.",
+ monitor:"VS, pain, RASS, SpO₂ per policy. Notify for RASS ≥ +2 or ≤ −3.",adverse:"Hallucinations, vivid dreams, hypertension, tachycardia, salivation, nystagmus.",
+ pearls:["Acute pain: start 0.05–0.2 mg/kg/hr, usual range 0.05–1. Chronic pain: start 0.02–0.2.","Sympathomimetic, so HR and BP may rise. Useful when the patient is on pressors.","Not for pain control alongside a paralytic. Fine as an adjunct to a running opioid."],
+ policy:["Only IPS, chronic pain, anesthesia, critical care attendings and palliative care may start it.","Ketamine-only infusions are not titrated. Every dose change needs a provider order.","BMI ≥ 40: dose on adjusted body weight.","Run with a primary IV of at least 10 mL/hr. Second competency-validated RN verifies order, bag and pump at start, every change and handoff.","Stop infusion, opioids and benzodiazepines for RR < 8 or RASS −4, −5, +3, +4; give O₂ per order and notify."],
+ flags:[],note:"No standard concentration is noted for ketamine-only infusions. Enter the concentration from the bag label to use the calculator."},
+{id:"ketfent",name:"Ketamine / Fentanyl",brand:"CP 3-606",cls:["analgesia"],tag:"Combination analgesic infusion",unit:"mg/kg/hr",
+ conc:[{label:"Ketamine 500 mg + fentanyl 1,250 mcg / 250 mL NS",per:2,show:"2 mg/mL ketamine"}],
+ co:{name:"Fentanyl",per:5,unit:"mcg/hr"},
+ bolus:"None",initial:0.05,step:0.05,interval:"interval blank in policy; provider order for each change above 10 mL/hr",max:0.4,
+ rateLimit:{v:10,t:"Above 10 mL/hr, every dose change needs a provider order (CP 3-606)."},
+ limits:[],
+ where:[["ICU","ok"],["2-RN check","info"],["Lockbox","info"]],
+ mech:"<b>NMDA</b> antagonist plus <b>μ-opioid</b> agonist in one bag. Doses are expressed as ketamine.",
+ monitor:"VS, SpO₂, pain and RASS at baseline, every 15 min × 1 h, every 30 min × 2, then hourly.",adverse:"Bradycardia, hypotension, sedation, raised ICP, N/V, constipation, respiratory and CNS depression, hallucinations.",
+ pearls:["Policy default start is 2 mL/hr, which is 0.05 mg/kg/hr in an 80 kg patient.","The calculator shows the fentanyl that rides along at each rate.","Patient should stay oriented and easy to rouse the whole time."],
+ policy:["Only anesthesia, IPS, chronic pain, palliative, pulmonary CC, surgical CC and anesthesia CC attendings may start it.","Notify for HR > 120 or < 55; SBP > 180 or < 90; DBP > 110; RASS ≥ +2 or ≤ −3; RR < 10; SpO₂ < 92%; pain above goal twice.","Stop infusion, opioids and benzodiazepines for RR < 8 and/or RASS −4, −5, +3, +4; 100% O₂ per order; notify immediately.","Call pharmacy at least 2 h before the bag runs out."],
+ flags:[]}
+];
+
+const CLS = [["all","All"],["pressor","Vasopressors"],["inotrope","Inotropes"],["bp","Vasodilators & BP"],["sedation","Sedation"],["analgesia","Analgesia"]];
+const GRP = {pressor:"Vasopressors",inotrope:"Inotropes & inodilators",bp:"Vasodilators & BP control",sedation:"Sedation",analgesia:"Analgesia"};
+const REC = [["a1","α1"],["b1","β1"],["b2","β2"],["d","D1"],["v1","V1"]];
+
+const S = {cls:"all", q:"", id:"norepi", wt:80, conc:{}, custom:{}, dose:null};
+const $ = s=>document.querySelector(s);
+
+function fmt(n,dp){ if(n==null||!isFinite(n)) return "—"; const d = dp!=null?dp:(Math.abs(n)>=100?0:Math.abs(n)>=10?1:Math.abs(n)>=1?2:3); return (+n.toFixed(d)).toLocaleString(undefined,{maximumFractionDigits:d}); }
+function uparts(u){ return {kg:u.includes("/kg/"), min:u.endsWith("/min"), num:u.split("/")[0]}; }
+function drug(){ return D.find(d=>d.id===S.id); }
+function concOf(d){ const i = S.conc[d.id]||0; const c = d.conc[i]; if(c.custom){ const v = parseFloat(S.custom[d.id]); return v>0?v:null; } return c.per; }
+function toRate(d,dose){ const c=concOf(d), p=uparts(d.unit); if(c==null||dose==null||isNaN(dose)) return null; if(p.kg && !(S.wt>0)) return null; return dose*(p.kg?S.wt:1)*(p.min?60:1)/c; }
+function toDose(d,rate){ const c=concOf(d), p=uparts(d.unit); if(c==null||rate==null||isNaN(rate)) return null; if(p.kg && !(S.wt>0)) return null; return rate*c/((p.kg?S.wt:1)*(p.min?60:1)); }
+function range(d){ return d.initial!=null && d.max!=null ? `${fmt(d.initial)}–${fmt(d.max)} ${d.unit}` : d.unit; }
+
+const HC = [["hr","HR"],["bp","BP"],["svr","SVR"],["pvr","PVR"],["co","CO / CI"],["pre","CVP / PCWP"],["ect","Ectopy"]];
+const H = {
+ norepi:{hr:["↔/↑"],bp:["↑↑↑"],svr:["↑↑↑"],pvr:["↑"],co:["↔/↑","β1 support"],pre:["↑","venoconstriction"],ect:["↑"]},
+ vaso:{hr:["↔","may ↓"],bp:["↑↑"],svr:["↑↑↑"],pvr:["↔","little pulm effect"],co:["↔/↓"],pre:["↔/↑"],ect:["↔"]},
+ epi:{hr:["↑↑↑"],bp:["↑↑"],svr:["↓ → ↑↑","low → high dose"],pvr:["↑"],co:["↑↑↑"],pre:["↔"],ect:["↑↑↑"]},
+ phenyl:{hr:["↓","reflex"],bp:["↑↑↑"],svr:["↑↑↑"],pvr:["↑"],co:["↓","↑ afterload"],pre:["↑"],ect:["↔"]},
+ angio:{hr:["↔"],bp:["↑↑↑"],svr:["↑↑↑"],pvr:["↔/↑","limited data"],co:["↔"],pre:["↔/↑","limited data"],ect:["↔"]},
+ dopa:{hr:["↑↑"],bp:["↑ → ↑↑","dose"],svr:["↔ → ↑↑","low → high dose"],pvr:["↑"],co:["↑↑"],pre:["↑"],ect:["↑↑↑"]},
+ milri:{hr:["↑","mild"],bp:["↓"],svr:["↓↓"],pvr:["↓↓"],co:["↑↑"],pre:["↓↓"],ect:["↑"]},
+ dobut:{hr:["↑↑"],bp:["↔/↓","β2"],svr:["↓"],pvr:["↓","mild"],co:["↑↑↑"],pre:["↓"],ect:["↑↑"]},
+ iso:{hr:["↑↑↑"],bp:["↓","DBP falls"],svr:["↓↓"],pvr:["↓"],co:["↑↑"],pre:["↓"],ect:["↑↑↑"]},
+ nicard:{hr:["↑","reflex"],bp:["↓↓"],svr:["↓↓"],pvr:["↔/↓"],co:["↑","↓ afterload"],pre:["↔/↓"],ect:["↔"]},
+ clevi:{hr:["↑","reflex"],bp:["↓↓"],svr:["↓↓"],pvr:["↔/↓"],co:["↑","↓ afterload"],pre:["↔/↓"],ect:["↔"]},
+ ntg:{hr:["↑","reflex"],bp:["↓"],svr:["↔ → ↓","low → high dose"],pvr:["↓"],co:["↔/↓","↓ preload"],pre:["↓↓↓","venodilation"],ect:["↔"]},
+ esmolol:{hr:["↓↓↓"],bp:["↓"],svr:["↔"],pvr:["↔"],co:["↓↓"],pre:["↔/↑","↓ contractility"],ect:["↓","suppresses"]},
+ nipride:{hr:["↑","reflex"],bp:["↓↓↓"],svr:["↓↓↓"],pvr:["↓↓"],co:["↑","failing LV"],pre:["↓↓"],ect:["↔"]},
+ labet:{hr:["↓↓"],bp:["↓↓"],svr:["↓"],pvr:["↔"],co:["↔/↓"],pre:["↔"],ect:["↓"]},
+ propofol:{hr:["↔/↓"],bp:["↓↓"],svr:["↓↓"],pvr:["↔"],co:["↓","↓ contractility"],pre:["↓","venodilation"],ect:["↔"]},
+ dex:{hr:["↓↓"],bp:["↓","load may ↑ first"],svr:["↓"],pvr:["↔"],co:["↓","↓ HR"],pre:["↔"],ect:["↔","brady / AV block"]}
+};
+function mag(t){ if(t.includes("→")) return {k:"var",v:0}; if(t.startsWith("↔/")) return {k:t.endsWith("↑")?"u1":"d1",v:t.endsWith("↑")?.5:-.5}; const u=(t.match(/↑/g)||[]).length, d=(t.match(/↓/g)||[]).length; if(u) return {k:"u"+u,v:u}; if(d) return {k:"d"+d,v:-d}; return {k:"z",v:0}; }
+function cellHTML(c){ if(!c) return `<div class="cell z">—</div>`; const m=mag(c[0]); const lbl = c[0].replace("↔/↑","↔ / ↑").replace("↔/↓","↔ / ↓"); return `<div class="cell ${m.k}" title="${c[1]||""}">${lbl}${c[1]?`<small>${c[1]}</small>`:""}</div>`; }
+const MX = {cls:"all", sort:null, dir:-1};
+function renderMatrix(){
+  const F=[["all","All"],["pressor","Vasopressors"],["inotrope","Inotropes"],["bp","Vasodilators & BP"],["sedation","Sedation"]];
+  $("#mxFilters").innerHTML = F.map(([k,l])=>`<button class="chip" type="button" data-m="${k}" aria-pressed="${MX.cls===k}">${l}</button>`).join("");
+  let rows = D.filter(d=>H[d.id] && (MX.cls==="all"||d.cls.includes(MX.cls)));
+  const head = `<thead><tr><th>Drug</th>${HC.map(([k,l])=>`<th><button type="button" data-s="${k}" aria-sort="${MX.sort===k?(MX.dir<0?"descending":"ascending"):"none"}">${l}${MX.sort===k?(MX.dir<0?" ▾":" ▴"):""}</button></th>`).join("")}</tr></thead>`;
+  const row = d=>`<tr class="${d.id===S.id?"cur":""}"><td class="nm"><button type="button" data-open="${d.id}">${d.name}</button><small>${d.tag}</small></td>${HC.map(([k])=>`<td>${cellHTML(H[d.id][k])}</td>`).join("")}</tr>`;
+  let body = "";
+  if(MX.sort){
+    rows = rows.slice().sort((a,b)=>(mag(H[b.id][MX.sort][0]).v-mag(H[a.id][MX.sort][0]).v)*(MX.dir<0?1:-1));
+    body = rows.map(row).join("");
+  } else {
+    const groups = MX.cls==="all" ? ["pressor","inotrope","bp","sedation"] : [MX.cls];
+    groups.forEach(g=>{ const r = rows.filter(d=> MX.cls==="all" ? d.cls[0]===g : true); if(r.length) body += `<tr class="grp"><td colspan="8">${GRP[g]}</td></tr>` + r.map(row).join(""); });
+  }
+  $("#mx").innerHTML = head + `<tbody>${body}</tbody>`;
+}
+function renderFilters(){
+  $("#filters").innerHTML = CLS.map(([k,l])=>`<button class="chip" type="button" data-c="${k}" aria-pressed="${S.cls===k}">${l}</button>`).join("") + `<a class="chip jump" href="#hemo">Compare effects ↓</a><a class="chip jump" href="#sat">SAT &amp; RASS ↓</a>`;
+}
+function visible(){
+  const q = S.q.trim().toLowerCase();
+  return D.filter(d => (S.cls==="all"||d.cls.includes(S.cls)) && (!q || (d.name+" "+d.brand+" "+d.tag).toLowerCase().includes(q)));
+}
+function renderList(){
+  const v = visible();
+  if(!v.length){ $("#list").innerHTML = `<div class="empty">No drug matches “${S.q.replace(/</g,"&lt;")}”. Clear the search or pick another class.</div>`; return; }
+  const order = S.cls==="all" ? Object.keys(GRP) : [S.cls];
+  let h = "";
+  order.forEach(g=>{
+    const items = v.filter(d=> S.cls==="all" ? d.cls[0]===g : true);
+    if(!items.length) return;
+    h += `<div class="grp">${GRP[g]}</div>`;
+    h += items.map(d=>`<button type="button" class="item" data-id="${d.id}" aria-current="${d.id===S.id}"><span class="n">${d.name} <span>${d.brand}</span></span><span class="m">${d.conc[0].custom?"conc. not standardized":d.conc[0].label.replace(/ \((peripheral|central)\)/,"")} · ${range(d)}</span></button>`).join("");
+  });
+  $("#list").innerHTML = h;
+}
+
+function ladderVals(d){
+  if(d.ladder) return d.ladder;
+  if(d.initial==null||d.max==null||!d.step) return [];
+  const n = Math.round((d.max-d.initial)/d.step);
+  const stride = Math.max(1, Math.ceil((n+1)/14));
+  const out=[]; for(let i=0;i<=n;i+=stride) out.push(+(d.initial+i*d.step).toFixed(4));
+  if(out[out.length-1]!==d.max) out.push(d.max);
+  d.limits.forEach(l=>{ if(l.v>d.initial && l.v<d.max && !out.includes(l.v)) out.push(l.v); });
+  return out.sort((a,b)=>a-b);
+}
+
+function renderSheet(){
+  const d = drug();
+  if(!d){ $("#sheet").innerHTML=""; return; }
+  const ci = S.conc[d.id]||0, c = d.conc[ci], p = uparts(d.unit);
+  const recHTML = d.rec ? `<div class="rec">${REC.map(([k,l])=>{const v=d.rec[k]||0, a=Math.abs(v); return `<div class="rc"><b>${l}${v<0?" ⊘":""}</b><span class="dots" aria-label="${l} ${v<0?"blockade ":""}${a} of 3">${[1,2,3].map(i=>`<i class="${i<=a?"f":""}"></i>`).join("")}</span></div>`}).join("")}</div><div class="lnote">${d.rec && Object.values(d.rec).some(v=>v<0)?"⊘ marks receptor blockade. ":""}Relative receptor activity, 0–3.</div>` : `<div class="mech">${d.mech}</div>`;
+  $("#sheet").innerHTML = `
+  <div class="head">
+    <div><div class="cls">${d.tag}</div><h2>${d.name}<small>${d.brand}</small></h2></div>
+    <div class="pills">${d.where.map(([t,k])=>`<span class="pill ${k}">${t}</span>`).join("")}</div>
+  </div>
+
+  <section class="calc" aria-label="Dose and rate calculator">
+    <div class="ptitle">Pump check · dose ⇄ rate</div>
+    <div class="cmeta">
+      <span>Concentration ${d.conc.length>1?`<select id="concSel" aria-label="Concentration">${d.conc.map((x,i)=>`<option value="${i}" ${i===ci?"selected":""}>${x.label}</option>`).join("")}</select>`:(c.custom?"":`<b>${c.label}</b>`)}
+      ${c.custom?`<input id="customConc" class="mono" type="number" inputmode="decimal" step="any" min="0" style="width:90px" value="${S.custom[d.id]??""}" placeholder="e.g. 0.2" aria-label="Concentration per mL"> ${p.num}/mL`:` = <b>${c.show}</b>`}</span>
+      ${p.kg?`<span>Weight <b>${S.wt>0?fmt(S.wt,1)+" kg":"—"}</b></span>`:`<span>Not weight-based</span>`}
+    </div>
+    <div class="crow">
+      <div class="cbox"><label for="doseIn">Dose</label><div class="cin"><input id="doseIn" type="number" inputmode="decimal" step="${d.step||d.nstep||"any"}" ${d.initial!=null?`value="${d.initial}"`:""} ${d.max!=null?`max="${d.max}"`:""}><span class="u">${d.unit}</span></div></div>
+      <div class="swap" aria-hidden="true">⇄</div>
+      <div class="cbox"><label for="rateIn">Pump rate</label><div class="cin"><input id="rateIn" type="number" inputmode="decimal" step="any" min="0"><span class="u">mL/hr</span></div></div>
+    </div>
+    ${d.co?`<div class="co" id="coLine"></div>`:""}
+    ${d.max!=null?`<div class="bar" id="bar"></div>`:""}
+    <div class="alerts" id="alerts"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ptitle">Keck formulary · CP 4-156</div>
+    <dl class="spec" style="margin:10px 0 0">
+      <div><dt>Standard conc.</dt><dd>${d.conc.map(x=>x.custom?"Not standardized":x.label).join("<br>")}</dd></div>
+      <div><dt>Bolus</dt><dd style="font-family:var(--body);font-size:13.5px">${d.bolus}<span class="sub">requires prescriber order</span></dd></div>
+      <div><dt>Initial</dt><dd>${d.initial!=null?fmt(d.initial)+" "+d.unit:"—"}</dd></div>
+      <div><dt>Titration</dt><dd>${d.step?"± "+fmt(d.step)+" "+d.unit:"—"}<span class="sub">${d.interval}</span></dd></div>
+      <div><dt>Maximum</dt><dd>${d.max!=null?fmt(d.max)+" "+d.unit:"—"}${d.limits.length?`<span class="sub">${d.limits.map(l=>l.l+": "+fmt(l.v)).join(" · ")}</span>`:""}</dd></div>
+    </dl>
+  </section>
+
+  ${d.note?`<aside class="flag"><h3>Concentration</h3><ul style="list-style:none;padding:0"><li>${d.note}</li></ul></aside>`:""}
+  ${d.flags.length?`<aside class="flag"><h3>Check with pharmacy</h3><ul>${d.flags.map(f=>`<li>${f}</li>`).join("")}</ul></aside>`:""}
+
+  <div class="cols">
+    <div class="panel">
+      <div class="ptitle">Titration ladder at this concentration${p.kg?" and weight":""}</div>
+      <div id="ladder"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="panel"><div class="ptitle">${d.rec?"Receptor profile":"Mechanism"}</div>${recHTML}</div>
+      ${H[d.id]?`<div class="panel"><div class="ptitle">Hemodynamic effect · <a href="#hemo" style="color:inherit">compare all</a></div><div class="hstrip">${HC.map(([k,l])=>`<div><b>${l}</b>${cellHTML(H[d.id][k])}</div>`).join("")}</div></div>`:""}
+      <div class="panel"><div class="ptitle">Watch</div><div class="monitor"><div><b>Monitor</b>${d.monitor}</div><div><b>Adverse effects</b>${d.adverse}</div></div></div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="panel"><div class="ptitle">At the CTICU bedside</div><ul class="notes">${d.pearls.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+    <div class="panel"><div class="ptitle">Where and how · policy</div><ul class="notes">${d.policy.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+  </div>`;
+
+  const doseIn=$("#doseIn"), rateIn=$("#rateIn");
+  if(S.dose==null) S.dose = d.initial;
+  doseIn.value = S.dose!=null ? +(+S.dose).toFixed(4) : "";
+  const r = toRate(d,S.dose); rateIn.value = r!=null ? +r.toFixed(2) : "";
+  doseIn.addEventListener("wheel",e=>{ if(document.activeElement===doseIn) e.preventDefault(); },{passive:false});
+  doseIn.addEventListener("input",()=>{ if(doseIn.value!=="" && parseFloat(doseIn.value)<0) doseIn.value=0; S.dose = doseIn.value===""?null:parseFloat(doseIn.value); const r=toRate(d,S.dose); rateIn.value = r!=null? +r.toFixed(2):""; live(); });
+  rateIn.addEventListener("input",()=>{ const v = rateIn.value===""?null:parseFloat(rateIn.value); const x = toDose(d,v); S.dose = x; doseIn.value = x!=null? +x.toFixed(4):""; live(); });
+  const cs=$("#concSel"); if(cs) cs.addEventListener("change",()=>{ S.conc[d.id]=+cs.value; renderSheet(); });
+  const cc=$("#customConc"); if(cc) cc.addEventListener("input",()=>{ S.custom[d.id]=cc.value; const r=toRate(d,S.dose); rateIn.value=r!=null?+r.toFixed(2):""; live(); });
+  live();
+}
+
+function live(){
+  const d = drug(), p = uparts(d.unit), dose = S.dose, rate = toRate(d,dose);
+  const al = [];
+  if(p.kg && !(S.wt>0)) al.push(["info","Enter a dosing weight to convert this weight-based drug."]);
+  if(concOf(d)==null) al.push(["info","Enter the bag concentration to convert dose and rate."]);
+  if(dose!=null && d.max!=null && dose > d.max + 1e-9) al.push(["crit",`Above the CP 4-156 maximum of ${fmt(d.max)} ${d.unit}.`]);
+  d.limits.forEach(l=>{ if(dose!=null && dose > l.v + 1e-9 && !(d.max!=null && dose > d.max)) al.push(["warn",`Above ${l.l.toLowerCase().replace("periph","peripheral")} (${fmt(l.v)} ${d.unit}).`]); });
+  if(d.rateLimit && rate!=null && rate > d.rateLimit.v) al.push(["warn",d.rateLimit.t]);
+  if(dose!=null && d.initial!=null && dose>0 && dose < d.initial - 1e-9) al.push(["info",`Below the usual starting dose of ${fmt(d.initial)} ${d.unit}.`]);
+  $("#alerts").innerHTML = al.map(([k,t])=>`<div class="alert ${k}">${t}</div>`).join("");
+  const co = $("#coLine"); if(co) co.innerHTML = rate!=null ? `${d.co.name} delivered at this rate: <b>${fmt(rate*d.co.per)} ${d.co.unit}</b>` : "";
+  const bar = $("#bar");
+  if(bar){
+    const top = d.max*1.1, pct = v=>Math.max(0,Math.min(100, v/top*100));
+    const ticks = [{v:d.initial,l:"start "+fmt(d.initial),c:"start"}].concat(d.limits.map(l=>({v:l.v,l:l.l,c:"lim"}))).concat([{v:d.max,l:"max "+fmt(d.max),c:"end"}]);
+    const w = dose!=null ? pct(dose) : 0;
+    bar.innerHTML = `<div class="track"></div><div class="fill" style="width:${w}%;${dose!=null&&dose>d.max?"background:#FF6B5E":""}"></div>` + ticks.map(t=>`<div class="tick ${t.c}" style="left:${pct(t.v)}%"><span>${t.l}</span></div>`).join("");
+  }
+  // ladder
+  const vals = ladderVals(d), lad = $("#ladder");
+  if(!vals.length){ lad.innerHTML = `<div class="lnote">No titration schedule in CP 4-156 for this drug. Use the calculator with the ordered dose.</div>`; return; }
+  const near = dose==null?null:vals.reduce((a,b)=>Math.abs(b-dose)<Math.abs(a-dose)?b:a, vals[0]);
+  const limMap = {}; d.limits.forEach(l=>limMap[l.v]=l.l);
+  lad.innerHTML = `<div style="overflow-x:auto"><table class="ladder"><thead><tr><th>Dose (${d.unit})</th><th>mL/hr</th>${d.co?`<th>${d.co.name} ${d.co.unit}</th>`:""}</tr></thead><tbody>${vals.map(v=>{const r=toRate(d,v); const lim = v===d.max?"max":(limMap[v]||(v===d.initial?"start":"")); return `<tr class="${v===near?"on":""} ${lim?"limrow":""}" ${lim?`data-lim="${lim}"`:""}><td>${fmt(v)}</td><td>${r!=null?fmt(r,r<10?2:1):"—"}</td>${d.co?`<td>${r!=null?fmt(r*d.co.per):"—"}</td>`:""}</tr>`}).join("")}</tbody></table></div>${d.ladder?`<div class="lnote">Reference points; CP 4-156 lists no titration increment for this drug.</div>`:""}${vals.length && d.step && Math.round((d.max-d.initial)/d.step)+1>vals.length?`<div class="lnote">Every ${Math.ceil((Math.round((d.max-d.initial)/d.step)+1)/14)} steps shown. Type any dose in the calculator.</div>`:""}`;
+}
+
+/* SAT */
+const SATX = ["Active seizures, or sedative infusion for seizures","Alcohol withdrawal therapy","RASS greater than +2","ICP ≥ 20 mmHg, or sedative infusion to control ICP","Neuromuscular blockade infusion","Myocardial ischemia in the past 24 h","Comfort care","Delayed sternal closure (open chest)"];
+$("#satChecks").innerHTML = SATX.map((t,i)=>`<label for="sx${i}"><input type="checkbox" id="sx${i}"> <span>${t}</span></label>`).join("");
+$("#satChecks").addEventListener("change",()=>{
+  const n = [...document.querySelectorAll("#satChecks input")].filter(x=>x.checked).length, v=$("#satVerdict");
+  v.className = "verdict "+(n?"stop":"go");
+  v.textContent = n ? `${n} exclusion${n>1?"s":""} present. Do not start the SAT. Notify the provider and document.` : "No exclusions checked. Proceed with SAT: turn off sedatives.";
+});
+const RASS = [["+4","Combative","Overtly combative or violent; danger to staff"],["+3","Very agitated","Pulls or removes tubes or catheters; aggressive"],["+2","Agitated","Frequent non-purposeful movement; fights the ventilator"],["+1","Restless","Anxious, but movements not aggressive or vigorous"],["0","Alert and calm",""],["−1","Drowsy","Sustained awakening to voice, eye contact ≥ 10 s"],["−2","Light sedation","Briefly awakens to voice, eye contact < 10 s"],["−3","Moderate sedation","Movement or eye opening to voice, no eye contact"],["−4","Deep sedation","No response to voice; moves or opens eyes to physical stimulation"],["−5","Unarousable","No response to voice or physical stimulation"]];
+$("#rass").innerHTML = RASS.map(([s,n,t])=>`<tr class="${["0","−1","−2"].includes(s)?"tgt":""}"><td>${s}</td><td><b>${n}</b>${t?`<span>${t}</span>`:""}</td></tr>`).join("");
+
+/* events */
+$("#filters").addEventListener("click",e=>{ const b=e.target.closest("button[data-c]"); if(!b) return; S.cls=b.dataset.c; renderFilters(); const v=visible(); if(v.length && !v.find(d=>d.id===S.id)){ S.id=v[0].id; S.dose=null; renderSheet(); } renderList(); });
+$("#list").addEventListener("click",e=>{ const b=e.target.closest(".item"); if(!b) return; S.id=b.dataset.id; S.dose=null; renderList(); renderSheet(); renderMatrix(); if(window.innerWidth<=900) $("#sheet").scrollIntoView({behavior:"smooth",block:"start"}); });
+$("#q").addEventListener("input",e=>{ S.q=e.target.value; renderList(); const v=visible(); if(v.length===1 && v[0].id!==S.id){ S.id=v[0].id; S.dose=null; renderSheet(); renderList(); } });
+$("#wt").addEventListener("input",e=>{ S.wt=parseFloat(e.target.value); $("#wtEx").hidden=true; const d=drug(); if(uparts(d.unit).kg){ const r=toRate(d,S.dose); $("#rateIn").value = r!=null?+r.toFixed(2):""; const m=$(".cmeta span:nth-child(2) b"); if(m) m.textContent = S.wt>0?fmt(S.wt,1)+" kg":"—"; live(); } });
+
+$("#mxFilters").addEventListener("click",e=>{ const b=e.target.closest("button[data-m]"); if(!b) return; MX.cls=b.dataset.m; renderMatrix(); });
+$("#mx").addEventListener("click",e=>{
+  const sb=e.target.closest("button[data-s]"); if(sb){ const k=sb.dataset.s; if(MX.sort===k){ if(MX.dir<0) MX.dir=1; else { MX.sort=null; MX.dir=-1; } } else { MX.sort=k; MX.dir=-1; } renderMatrix(); return; }
+  const ob=e.target.closest("button[data-open]"); if(ob){ S.id=ob.dataset.open; S.dose=null; if(S.cls!=="all" && !drug().cls.includes(S.cls)){ S.cls="all"; renderFilters(); } S.q=""; $("#q").value=""; renderList(); renderSheet(); renderMatrix(); $("#sheet").scrollIntoView({behavior:"smooth",block:"start"}); }
+});
+renderFilters(); renderList(); renderSheet(); renderMatrix();
+</script>
+</body>
+</html>
