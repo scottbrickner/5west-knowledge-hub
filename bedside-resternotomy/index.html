@@ -232,6 +232,8 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
     <li>Keck Hospital of USC / USC Norris Cancer Hospital. <i>Emergent Sternotomy and Resuscitation of the Post-Op Cardiac Surgery Patient</i>, Policy SCU 10-214. Effective 05/02/1991; reviewed 10/10/2023.</li>
     <li>Brand J, Dunning J, et al. The Society of Thoracic Surgeons expert consensus for the resuscitation of patients who arrest after cardiac surgery. <i>Ann Thorac Surg</i>. 2017;103(3):1005–20. PMID 28122680.</li>
     <li>Karcher C, et al. The Australasian ANZSCTS/ANZICS guidelines on cardiothoracic advanced life support (CALS-ANZ). <i>Crit Care Resusc</i>. 2022;24(3):218–23. PMID 38046213.</li>
+    <li>Institute for Safe Medication Practices. <i>ISMP Safe Practice Guidelines for Adult IV Push Medications</i>. 2015 (Guidelines 1.1 and 3.6).</li>
+    <li>Cole JB, et al. Human errors and adverse hemodynamic events related to "push dose pressors" in the emergency department. <i>J Med Toxicol</i>. 2019;15(4):276–86. PMID 31270748.</li>
     <li>Mackay JH, et al. Six-year prospective audit of chest reopening after cardiac arrest. <i>Eur J Cardiothorac Surg</i>. 2002;22(3):421–5. PMID 12204734.</li>
     <li>Elsevier Clinical Skills. <i>Sternotomy, emergent, assisting</i>. Revised September 15, 2025.</li>
     <li>Apfelbaum JL, et al. Practice advisory for the prevention and management of operating room fires. <i>Anesthesiology</i>. 2013;118(2):271–90.</li>
@@ -465,6 +467,7 @@ const TABS = [
     <li>Gives a brief, pertinent report when the surgeon arrives.</li></ul><p style="margin-top:8px">${S.pol}</p></div>
    <div class="box"><h4>Scrub RN or tech</h4><ul>
     <li>Hand hygiene, gown, gloves, face shield. Places the Bovie grounding pad if there's time; otherwise someone places it under the drape afterward ${S.unit}.</li>
+    <li><a href="https://scottbrickner.github.io/5west-knowledge-hub/sterile-gowning/" target="_blank" rel="noopener"><b>Gowning and closed-glove guide →</b></a></li>
     <li>After prep, lays a large sterile sheet over the lower half as the back table.</li>
     <li>Assembles sterile parts; hands off suction, pad cable, Bovie pencil and paddle cables to the circulator.</li>
     <li>Runs sharps control in a designated sterile bowl; keeps internal paddles sterile between shocks.</li>
@@ -635,6 +638,46 @@ const TABS = [
     <li>Call "all clear" if the provider doesn’t.</li>
     <li>Repeat as ordered.</li></ol><p style="margin-top:8px">${S.pol}</p></div>
   </div>`},
+ {id:'meds', label:'CALS meds', html:`
+  <h3>CALS meds: epinephrine and amiodarone</h3>
+  <div class="call crit"><b>Epi isn’t first.</b> Shock or pace, pause the drips, prepare to reopen. Routine 1 mg epinephrine is not part of post-cardiac-surgery arrest care. ${S.nat}</div>
+  <div class="grid2">
+   <div class="box hl"><h4>If epinephrine is ordered, expect micrograms</h4><ul>
+    <li>Give it only when the team leader or an experienced clinician directs it. STS rates routine epinephrine during the arrest as potentially harmful.</li>
+    <li>Typical small bolus: <b>50–100 mcg</b>, titrated to response. Older ranges run to 300 mcg.</li>
+    <li>Why: a full 1 mg can cause rebound hypertension once the heart restarts, which can tear fresh suture lines and grafts and restart bleeding.</li>
+    <li>These doses rest on expert consensus; no outcome study compares them.</li></ul><p style="margin-top:8px"><span class="src nat">STS 2017 · CALS-ANZ 2022</span></p></div>
+   <div class="box"><h4>Amiodarone ${S.pol}</h4><p>After three failed shocks for VF or VT: amiodarone <b>300 mg</b> through the central line, CPR, and a single shock every two minutes until the chest is open.</p></div>
+  </div>
+  <div class="grid2">
+   <div class="box"><h4>The 10 mcg/mL syringe</h4>
+    <div class="tw"><table class="t"><thead><tr><th>Dose</th><th>10 mcg/mL (dilute)</th><th>0.1 mg/mL (code syringe)</th></tr></thead><tbody>
+     <tr><td class="mono">10 mcg</td><td class="mono">1 mL</td><td class="mono">0.1 mL</td></tr>
+     <tr><td class="mono">20 mcg</td><td class="mono">2 mL</td><td class="mono">0.2 mL</td></tr>
+     <tr><td class="mono">50 mcg</td><td class="mono">5 mL</td><td class="mono">0.5 mL</td></tr>
+     <tr><td class="mono">100 mcg</td><td class="mono">10 mL (whole syringe)</td><td class="mono">1 mL</td></tr>
+     <tr><td class="mono">1 mg</td><td class="mono">—</td><td class="mono">10 mL (whole syringe)</td></tr>
+    </tbody></table></div>
+    <p class="note" style="margin-top:8px">The dilute syringe turns a small dose into a volume you can measure. Pushing 0.5 mL from a code syringe is where tenfold errors start.</p></div>
+   <div class="box"><h4>Getting a 10 mcg/mL syringe</h4><ul>
+    <li><b>Best:</b> a pharmacy-prepared, ready-to-administer syringe. <span class="src nat">ISMP</span></li>
+    <li><b>If you have to mix it:</b> 1 mL of the 0.1 mg/mL code epinephrine plus 9 mL normal saline in a 10 mL syringe = <b>100 mcg in 10 mL</b>.</li>
+    <li>Label it right away: drug, strength (10 mcg/mL), amount, time.</li>
+    <li>Don’t dilute it in a prefilled saline flush syringe. <span class="src nat">ISMP</span></li>
+    <li>Say "mg per mL" and "micrograms," never "1:10,000."</li></ul>
+    <p class="note" style="margin-top:8px">Published push-dose errors run from 2.5- to 100-fold overdoses, mostly from bedside dilution.</p></div>
+  </div>
+  <div class="grid2">
+   <div class="box"><h4>Closed loop, every time</h4><ul>
+    <li>Ask: "Milligrams or micrograms?"</li>
+    <li>Read back the dose <b>and the volume</b>: "Fifty micrograms, five mL of the ten-mic-per-mL."</li>
+    <li>If someone else mixed it, check the label aloud with them before it goes in.</li></ul></div>
+   <div class="box"><h4>Intracardiac epinephrine</h4><ul>
+    <li>Not part of any current CALS guideline. Drugs go through the <b>central line</b>, and the dose logic doesn’t change when the chest is open.</li>
+    <li>If the surgeon wants to inject directly into the heart, it’s their call. The dose, concentration and preparation are settled between the surgeon and pharmacy, not by nursing.</li>
+    <li>Your job: hand off exactly what was ordered, labeled, with a closed-loop read-back. The surgeon injects.</li></ul></div>
+  </div>
+  <p class="note">Keck’s CALS epinephrine practice and pharmacy syringe availability are being confirmed with pharmacy and the CTICU medical director. Until then, follow the team leader’s order.</p>`},
  {id:'after', label:'After & charting', html:`
   <h3>After the chest is open</h3>
   <div class="grid3">
@@ -658,7 +701,7 @@ const TABS = [
   <div class="tw"><table class="t"><thead><tr><th>Topic</th><th>Keck SCU 10-214</th><th>Elsewhere</th></tr></thead><tbody>
    <tr><td>Skin prep</td><td>Povidone-iodine</td><td>Elsevier 2025 lists chlorhexidine as preferred. Keck uses povidone-iodine only, a fire-prevention choice.</td></tr>
    <tr><td>First internal shock</td><td>10 J, up to 50 J max</td><td>CALS-ANZ: 20 J.</td></tr>
-   <tr><td>Epinephrine</td><td>Not addressed</td><td>STS 2017: not routine during arrest unless an experienced clinician directs it. CALS-ANZ: 50–100 mcg if given. Expect micrograms.</td></tr>
+   <tr><td>Epinephrine</td><td>Not addressed</td><td>See the CALS meds tab. STS 2017: not routine during arrest unless an experienced clinician directs it. CALS-ANZ: 50–100 mcg if given. Expect micrograms.</td></tr>
    <tr><td>Infusions</td><td>Not addressed</td><td>STS / CALS: pause and check all infusions.</td></tr>
    <tr><td>Time to reopen</td><td>"Prepare for emergency resternotomy"</td><td>STS, ERC, CALS-ANZ: within 5 minutes. Survival 48% if opened within 10 minutes vs 12% after (Mackay 2002).</td></tr>
    <tr><td>Bleeding threshold</td><td>Trigger list, no number</td><td>Elsevier 2025: some facilities reopen at ≥3 mL/kg/h for 3 hours.</td></tr>
