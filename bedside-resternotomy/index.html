@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>*,*::before,*::after{box-sizing:border-box}:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Bedside Resternotomy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Open+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: 5 West hub tokens (cardinal/gold, Open Sans + Plex Mono). Monitor-strip scenario picker → branching player → "Opening the chest" tabbed reference. */
+:root{
+  --paper:#F7F5F2; --surface:#FFFFFF; --sunk:#EFEBE6; --ink:#262322; --muted:#6A625E; --line:#E2DCD6;
+  --cardinal:#990000; --cardinal-ink:#990000; --gold:#FFCC00; --gold-soft:#FFF4C2; --gold-ink:#6B5300;
+  --ok:#2F6E47; --ok-soft:#E3F0E7; --warn:#8A5A00; --warn-soft:#FBEFD6; --crit:#B3261E; --crit-soft:#FBE3E1;
+  --mon:#0E1311; --mon-ink:#7CF29A; --mon-dim:#5B8F6B; --mon-red:#FF6B6B; --mon-amb:#FFC24D;
+  --src-pol:#990000; --src-pol-soft:#F6E3E1; --src-nat:#1E3A66; --src-nat-soft:#E3E9F2; --src-unit:#6B5300; --src-unit-soft:#FFF4C2;
+  --body:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#171413; --surface:#211D1C; --sunk:#2A2524; --ink:#EEE8E3; --muted:#A99F99; --line:#3A3331;
+  --cardinal:#B01E1E; --cardinal-ink:#F08A84; --gold-soft:#3A3113; --gold-ink:#FFD84D;
+  --ok:#7CC79A; --ok-soft:#1F3328; --warn:#F2C064; --warn-soft:#3A2E17; --crit:#FF8A80; --crit-soft:#3D1F1D;
+  --src-pol:#F08A84; --src-pol-soft:#3A2120; --src-nat:#B9CDEE; --src-nat-soft:#1F2733; --src-unit:#FFD84D; --src-unit-soft:#3A3113;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#171413; --surface:#211D1C; --sunk:#2A2524; --ink:#EEE8E3; --muted:#A99F99; --line:#3A3331;
+  --cardinal:#B01E1E; --cardinal-ink:#F08A84; --gold-soft:#3A3113; --gold-ink:#FFD84D;
+  --ok:#7CC79A; --ok-soft:#1F3328; --warn:#F2C064; --warn-soft:#3A2E17; --crit:#FF8A80; --crit-soft:#3D1F1D;
+  --src-pol:#F08A84; --src-pol-soft:#3A2120; --src-nat:#B9CDEE; --src-nat-soft:#1F2733; --src-unit:#FFD84D; --src-unit-soft:#3A3113;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 56px;display:flex;flex-direction:column;gap:36px}
+h1,h2,h3,h4{text-wrap:balance;margin:0;line-height:1.15}
+p{margin:0}
+ul,ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:5px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+a{color:var(--cardinal-ink)}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cardinal-ink)}
+
+/* header */
+header{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:24px;align-items:end;border-left:4px solid var(--cardinal);padding-left:18px}
+header h1{font-size:clamp(30px,5vw,44px);font-weight:800;letter-spacing:-.02em;margin-top:6px}
+header .lede{color:var(--muted);max-width:60ch;margin-top:10px}
+.legend{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:8px;font-size:13px}
+.legend b{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.legend div{display:flex;gap:8px;align-items:baseline}
+
+.src{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:1px 6px;white-space:nowrap;vertical-align:1px}
+.src.pol{color:var(--src-pol);background:var(--src-pol-soft)}
+.src.nat{color:var(--src-nat);background:var(--src-nat-soft)}
+.src.unit{color:var(--src-unit);background:var(--src-unit-soft)}
+
+h2.sec{font-size:24px;font-weight:800;letter-spacing:-.01em;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+h2.sec span{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:0}
+
+/* scenario picker */
+.pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+.scn{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--surface);transition:transform .15s,border-color .15s}
+.scn:hover{transform:translateY(-2px);border-color:var(--cardinal)}
+.scn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.scn[aria-pressed="true"]{border:2px solid var(--cardinal)}
+.strip{background:var(--mon);color:var(--mon-ink);font-family:var(--mono);font-size:12px;padding:10px 12px 8px;display:flex;flex-direction:column;gap:4px}
+.strip svg{display:block;width:100%;height:34px}
+.strip .row{display:flex;justify-content:space-between;gap:8px}
+.strip .red{color:var(--mon-red)} .strip .amb{color:var(--mon-amb)} .strip .dim{color:var(--mon-dim)}
+.scn .meta{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px}
+.scn .tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.scn .tag.code{color:var(--crit)} .scn .tag.urg{color:var(--warn)}
+.scn h3{font-size:16px;font-weight:700}
+.scn p{font-size:13.5px;color:var(--muted)}
+
+/* player */
+.player{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.player[hidden]{display:none}
+.p-head{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line)}
+.p-head h3{font-size:18px;font-weight:800}
+.dots{display:flex;gap:6px}
+.dots i{width:22px;height:5px;border-radius:3px;background:var(--line)}
+.dots i.on{background:var(--cardinal)} .dots i.done{background:var(--ok)}
+.vign{background:var(--mon);color:var(--mon-ink);font-family:var(--mono);font-size:13.5px;padding:14px 18px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 24px}
+.vign .story{color:#DDE8E0;font-family:var(--body);font-size:14.5px;grid-column:1/-1;line-height:1.5}
+.vign .vit{display:flex;flex-wrap:wrap;gap:6px 18px}
+.vign .vit span b{font-weight:600}
+.p-body{padding:18px;display:flex;flex-direction:column;gap:14px}
+.q{font-size:17px;font-weight:700}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{all:unset;box-sizing:border-box;cursor:pointer;border:1px solid var(--line);border-radius:var(--r);padding:11px 14px;background:var(--paper);display:flex;gap:10px;align-items:flex-start}
+.opt:hover{border-color:var(--ink)}
+.opt:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.opt .k{font-family:var(--mono);font-weight:600;color:var(--muted);min-width:1.2em}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--crit);background:var(--crit-soft)}
+.opt[disabled]{cursor:default}
+.fb{border-left:4px solid var(--ok);background:var(--ok-soft);padding:12px 14px;border-radius:0 var(--r) var(--r) 0;display:flex;flex-direction:column;gap:8px}
+.fb.no{border-color:var(--crit);background:var(--crit-soft)}
+.fb b.v{font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.p-nav{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;font-weight:700;font-size:14px;padding:9px 16px;border-radius:var(--r);background:var(--cardinal);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn[hidden]{display:none}
+
+/* tabs */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-top:14px;scrollbar-width:thin}
+.tab{all:unset;box-sizing:border-box;cursor:pointer;white-space:nowrap;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:600}
+.tab[aria-selected="true"]{background:var(--cardinal);border-color:var(--cardinal);color:#fff}
+.tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-top:12px;display:flex;flex-direction:column;gap:18px}
+.panel h3{font-size:19px;font-weight:800}
+.panel h4{font-size:14px;font-weight:700;margin-bottom:6px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.box{border:1px solid var(--line);border-radius:var(--r);padding:14px;background:var(--paper);min-width:0}
+.box.hl{border-color:var(--cardinal);border-width:2px}
+.note{font-size:13.5px;color:var(--muted)}
+.call{border-left:4px solid var(--gold);background:var(--gold-soft);padding:12px 14px;border-radius:0 var(--r) var(--r) 0;font-size:14.5px}
+.call.crit{border-color:var(--crit);background:var(--crit-soft)}
+
+/* energy ladder */
+.ladder{display:flex;align-items:flex-end;gap:8px;height:150px;padding-top:6px}
+.rung{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;min-width:0}
+.rung i{display:block;width:100%;border-radius:4px 4px 0 0;background:var(--cardinal)}
+.rung b{font-family:var(--mono);font-size:15px}
+.rung.cap{opacity:.95}
+.ceiling{font-family:var(--mono);font-size:12px;color:var(--crit);border-top:2px dashed var(--crit);padding-top:4px}
+
+/* instruments */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:7px 14px;font-size:13.5px;font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.inst{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.tool{border:1px solid var(--line);border-radius:var(--r);padding:14px;background:var(--paper);display:flex;flex-direction:column;gap:6px}
+.tool svg{width:100%;height:56px}
+.tool h4{margin:0}
+.tool p{font-size:13.5px;color:var(--muted)}
+.tool .ord{font-family:var(--mono);font-size:12px;color:var(--cardinal-ink);font-weight:600}
+
+/* fire triangle */
+.tri{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tri .box h4{display:flex;gap:8px;align-items:center}
+.tri .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+.t th,.t td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+.t th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tw{overflow-x:auto}
+
+.refs{font-size:13px;color:var(--muted)}
+.refs ol{gap:6px}
+footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+
+@media (max-width:860px){
+  header,.grid2,.grid3,.tri{grid-template-columns:1fr}
+  .pick{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:520px){ .pick{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){ .scn{transition:none} .scn:hover{transform:none} }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <div>
+    <div class="eyebrow">5 West · CTICU · SCU 10-214</div>
+    <h1>Bedside Resternotomy</h1>
+    <p class="lede">When a fresh cardiac surgery patient arrests or slides toward it, the chest may get opened in the room. Pick what the monitor is showing, make the calls, then work through what opening the chest takes: roles, prep, drape, Bovie, fire, instruments and internal defib.</p>
+  </div>
+  <div class="legend" aria-label="Source labels">
+    <b>Every point is labeled by source</b>
+    <div><span class="src pol">SCU 10-214</span> Keck policy, reviewed 10/10/2023</div>
+    <div><span class="src nat">STS / CALS</span> National guidance the policy doesn't cover</div>
+    <div><span class="src unit">5 West practice</span> How our unit does it</div>
+  </div>
+</header>
+
+<section aria-labelledby="h-start">
+  <h2 class="sec" id="h-start">1 · What's on the monitor? <span>Six presentations. Three are a Code Blue; three are not yet.</span></h2>
+  <div class="pick" id="pick"></div>
+  <div class="player" id="player" hidden>
+    <div class="p-head"><h3 id="p-title"></h3><div class="dots" id="dots" aria-hidden="true"></div></div>
+    <div class="vign" id="vign"></div>
+    <div class="p-body">
+      <p class="q" id="q"></p>
+      <div class="opts" id="opts" role="group"></div>
+      <div id="fb" aria-live="polite"></div>
+      <div class="p-nav">
+        <button class="btn ghost" type="button" id="b-pick">Pick another</button>
+        <button class="btn" type="button" id="b-next" hidden>Next</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="open" aria-labelledby="h-open">
+  <h2 class="sec" id="h-open">2 · Opening the chest <span>The shared end of every path.</span></h2>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="panels"></div>
+</section>
+
+<section class="refs" aria-labelledby="h-refs">
+  <h4 id="h-refs">Sources</h4>
+  <ol id="reflist">
+    <li>Keck Hospital of USC / USC Norris Cancer Hospital. <i>Emergent Sternotomy and Resuscitation of the Post-Op Cardiac Surgery Patient</i>, Policy SCU 10-214. Effective 05/02/1991; reviewed 10/10/2023.</li>
+    <li>Brand J, Dunning J, et al. The Society of Thoracic Surgeons expert consensus for the resuscitation of patients who arrest after cardiac surgery. <i>Ann Thorac Surg</i>. 2017;103(3):1005–20. PMID 28122680.</li>
+    <li>Karcher C, et al. The Australasian ANZSCTS/ANZICS guidelines on cardiothoracic advanced life support (CALS-ANZ). <i>Crit Care Resusc</i>. 2022;24(3):218–23. PMID 38046213.</li>
+    <li>Mackay JH, et al. Six-year prospective audit of chest reopening after cardiac arrest. <i>Eur J Cardiothorac Surg</i>. 2002;22(3):421–5. PMID 12204734.</li>
+    <li>Elsevier Clinical Skills. <i>Sternotomy, emergent, assisting</i>. Revised September 15, 2025.</li>
+    <li>Apfelbaum JL, et al. Practice advisory for the prevention and management of operating room fires. <i>Anesthesiology</i>. 2013;118(2):271–90.</li>
+    <li>Jones EL, et al. Operating room fires and surgical skin preparation. <i>J Am Coll Surg</i>. 2017;225(1):160–5. PMID 28189662.</li>
+    <li>The Joint Commission. Sentinel Event Alert: Updated surgical fire prevention for the 21st century. October 18, 2023.</li>
+    <li>US Food and Drug Administration. Preventing Surgical Fires initiative. 2012.</li>
+    <li>APSF Committee on Technology. Reducing the risk of defibrillation fires. <i>APSF Newsletter</i>. 2009;24(3).</li>
+    <li>Resuscitation Council UK. 2025 Adult Advanced Life Support Guidelines.</li>
+    <li>Mathias JM. Scoring fire risk for surgical patients (Silverstein Fire Risk Assessment Score). <i>OR Manager</i>. 2006;22(1).</li>
+    <li>Crossley GH, et al. HRS/ASA expert consensus statement on the perioperative management of patients with implantable defibrillators, pacemakers and arrhythmia monitors. <i>Heart Rhythm</i>. 2011. PMID 21722856.</li>
+    <li>Seo K, et al. Electromagnetic interference of an external temporary pacemaker during surgery. <i>Anesth Prog</i>. 1996;43(2):64–6. PMID 10336403.</li>
+    <li>Valleylab. Force EZ-C Electrosurgical Generator User's Guide (REM contact quality monitoring). 2008.</li>
+    <li>ChloraPrep One-Step and 3M DuraPrep product labeling (dry times, pooling).</li>
+  </ol>
+</section>
+
+<footer>Training reference for 5 West CTICU. Keck policy SCU 10-214 governs; items labeled STS / CALS or 5 West practice fill gaps the policy doesn't address and follow the surgeon's and team leader's direction. Prepared by Scott Brickner, MSN, RN, CCRN, Nursing Professional Development.</footer>
+</div>
+
+<script>
+const S = {pol:'<span class="src pol">SCU 10-214</span>', nat:'<span class="src nat">STS / CALS</span>', unit:'<span class="src unit">5 West practice</span>', els:'<span class="src nat">Elsevier 2025</span>'};
+
+/* ---------- shared nodes ---------- */
+const AIRWAY = {
+  q:'Respiratory therapy is at the head of the bed. What happens to the ventilator?',
+  opts:[
+    {t:'FiO₂ to 100%, PEEP off, switch to the bag to confirm tube position and cuff, then listen to both sides.', ok:true,
+     fb:`${S.pol} Airway and ventilation, items a–c. PEEP cuts venous return to a heart that’s already failing to fill, and bagging lets you feel and see the tube. Listen bilaterally to rule out a pneumothorax or hemothorax.`},
+    {t:'Increase PEEP to recruit and improve oxygenation.', fb:`Opposite direction. ${S.pol} says switch PEEP <b>off</b>: positive pressure lowers venous return when the heart can least afford it.`},
+    {t:'Leave the settings alone so you don’t add another variable.', fb:`${S.pol} calls for FiO₂ 100% and PEEP off, then a bag check of the ETT and cuff. A displaced tube or tension pneumothorax is a reversible cause you’d miss.`}
+  ]};
+const DRIPS = {
+  q:'Six infusions are running. Someone asks what to do with them.',
+  opts:[
+    {t:'Pause and check all of them. Restart only what the team leader asks for.', ok:true,
+     fb:`${S.nat} STS 2017 and CALS-ANZ: stop all infusions, then check. A runaway pressor or vasodilator can be the cause, and after ROSC the restart is deliberate. SCU 10-214 doesn’t address this; follow the team leader.`},
+    {t:'Turn the pressors up to support pressure.', fb:`${S.nat} The CALS approach is to pause and check every infusion first. An infusion error can be what caused the arrest.`},
+    {t:'Leave them running; they were fine an hour ago.', fb:`${S.nat} STS and CALS both say pause and check all infusions during the arrest.`}
+  ]};
+const STAGE = {
+  q:'The surgeon is on the way and will decide bedside vs OR. What do you set in motion now?',
+  opts:[
+    {t:'Delegate the calls (surgeon STAT, fellow/resident, OR, anesthesia resident and attending, blood bank, RN supervisor, pharmacy) and have the team bring the sternotomy cart, crash cart, defibrillator, head lamp and ordered meds. Send someone to the OR for the Bovie.', ok:true,
+     fb:`${S.pol} Pre-procedure 1–3. The Bovie machine lives in the OR, so it needs a runner the moment this is a possibility. Give a brief, pertinent report when the surgeon walks in.`},
+    {t:'Wait until the surgeon examines the patient before calling anyone else.', fb:`${S.pol} has the primary nurse delegate the notifications and bring equipment <b>before</b> the surgeon arrives. Everything on that list takes minutes to arrive.`},
+    {t:'Strip and milk the chest tubes hard until output resumes.', fb:`That’s not in SCU 10-214, and it doesn’t replace getting the team and equipment moving. Follow your chest tube orders and keep staging.`}
+  ]};
+const PREP = {
+  q:'The decision is bedside. How do you prepare the patient?',
+  opts:[
+    {t:'Lay them flat, keep ventilation going, make sure sedation is ordered and given, and confirm consent if there’s time.', ok:true,
+     fb:`${S.pol} Patient preparation a–e: flat, ventilation maintained, sedation is necessary, explain to patient and family and check consent if time allows. In an acute emergency, consent may not be possible.`},
+    {t:'Raise the head of the bed to 30° for aspiration precautions.', fb:`${S.pol} says position the patient <b>flat</b>. The surgeon needs the chest level and accessible.`},
+    {t:'Hold sedation so you can keep following the neuro exam.', fb:`${S.pol}: "Sedation is necessary." Have sedatives, analgesia and paralytics ordered by the provider at the bedside.`}
+  ]};
+
+/* ---------- scenarios ---------- */
+const SCN = [
+ {id:'A', tag:'Code Blue', cls:'code', title:'VF / pulseless VT', blurb:'Shock first, three times, fast.',
+  wave:'vf', strip:['<span class="red">VF</span>','ABP <span class="red">—/—</span>','SpO₂ <span class="dim">---</span>'],
+  story:'POD 0, CABG ×3, four hours out of the OR. The monitor goes to VF. The arterial line is flat. Epicardial wires and two chest tubes are in.',
+  vit:['HR <b>VF</b>','ABP <b class="red">flat</b>','EtCO₂ <b>8</b>','Wires <b>A+V</b>'],
+  nodes:[
+   {q:'First move?',
+    opts:[
+     {t:'Call a Code Blue and shock up to three times in rapid succession.', ok:true,
+      fb:`${S.pol} An arrest means a Code Blue (Policy 5), and for VF/VT the first step is "shock, three attempts in rapid succession." ${S.nat} STS: all three within about a minute; compressions may wait up to one minute for them.`},
+     {t:'Start compressions and give 1 mg epinephrine.', fb:`Not first. ${S.pol} puts three rapid shocks before BLS. ${S.nat} STS 2017 rates routine epinephrine during the arrest as harmful unless an experienced clinician directs it; if it’s ordered, expect micrograms (50–100 mcg), not 1 mg.`},
+     {t:'Page the surgeon and wait for them to decide.', fb:`Call the surgeon, but don’t wait. ${S.pol}: Code Blue plus three rapid shocks for VF/VT.`}]},
+   {q:'Three shocks, no conversion. Now?',
+    opts:[
+     {t:'Start CPR, give amiodarone 300 mg by central line, prepare for resternotomy, and shock once every two minutes until the chest is open.', ok:true,
+      fb:`${S.pol} Cardiac arrest 1.b.i and 1.c.i. ${S.nat} STS targets reopening within 5 minutes; in the Papworth audit, 48% survived when the chest was opened within 10 minutes vs 12% after.`},
+     {t:'Keep shocking every 30 seconds until it converts.', fb:`${S.pol} After three, it’s CPR, amiodarone 300 mg by central line and a single shock every two minutes while the team prepares to open.`},
+     {t:'Run standard ACLS with 1 mg epinephrine every 3–5 minutes.', fb:`${S.pol} modifies ACLS for this population, following STS. Epinephrine isn’t in the policy’s sequence; give it only as the team leader directs, and expect micrograms.`}]},
+   AIRWAY, DRIPS]},
+ {id:'B', tag:'Code Blue', cls:'code', title:'Asystole or severe brady', blurb:'Wires in? Pace before you push.',
+  wave:'brady', strip:['HR <span class="red">32</span>','ABP <span class="amb">48/30</span>','Wires <span>A+V</span>'],
+  story:'POD 1 after mitral valve replacement. The rate drifts down to the 30s, then flatlines. Atrial and ventricular wires are attached to the pacemaker at backup settings.',
+  vit:['HR <b class="red">32 → 0</b>','ABP <b class="red">flat</b>','Pacer <b>VVI 40</b>'],
+  nodes:[
+   {q:'First move?',
+    opts:[
+     {t:'Call a Code Blue and pace through the wires at maximum output.', ok:true,
+      fb:`${S.pol} Asystole or severe bradycardia: "pace (if wires available)." ${S.nat} STS: DDD at a rate of 80–100 with maximum outputs, within about a minute.`},
+     {t:'Give atropine and wait a minute to see if it works.', fb:`${S.pol} goes straight to pacing when wires are available. Atropine isn’t in the policy’s sequence.`},
+     {t:'Start compressions immediately.', fb:`Close, but pace first if the wires are there. ${S.nat} STS: start CPR if pacing doesn’t capture within about a minute.`}]},
+   {q:'No capture. Now?',
+    opts:[
+     {t:'Start CPR, consider transcutaneous pacing, and prepare for resternotomy.', ok:true,
+      fb:`${S.pol} 1.b.ii and 1.c.ii: consider external pacing, then CPR until resternotomy.`},
+     {t:'Keep adjusting the pacemaker for five minutes before compressions.', fb:`${S.nat} STS allows about one minute for pacing to work, then CPR. ${S.pol}: CPR until resternotomy.`},
+     {t:'Give 1 mg epinephrine and keep pacing.', fb:`${S.pol} goes to CPR, external pacing and resternotomy prep. Epinephrine is for the team leader to direct, in micrograms.`}]},
+   AIRWAY, DRIPS]},
+ {id:'C', tag:'Code Blue', cls:'code', title:'PEA while paced', blurb:'Spikes on the screen, no pulse.',
+  wave:'paced', strip:['HR <span>90 P</span>','ABP <span class="red">—/—</span>','SpO₂ <span class="dim">---</span>'],
+  story:'POD 0 after aortic valve replacement, paced DDD at 90. Paced complexes march across the monitor, but there’s no arterial waveform and no pleth.',
+  vit:['HR <b>90 paced</b>','ABP <b class="red">flat</b>','Pleth <b class="red">none</b>'],
+  nodes:[
+   {q:'Paced complexes, no pulse. First?',
+    opts:[
+     {t:'Call a Code Blue and briefly turn pacing off to look for VF underneath.', ok:true,
+      fb:`${S.pol} 1.b.iii: "if paced, turn off pacing to exclude underlying ventricular fibrillation." Pacing artifact can hide VF, and VF needs shocks, not CPR alone.`},
+     {t:'Increase the pacing rate to raise cardiac output.', fb:`Rate won’t fix a heart that isn’t pumping. ${S.pol}: pause pacing to exclude underlying VF.`},
+     {t:'Deliver a synchronized shock.', fb:`There’s no rhythm to sync to until you know what’s under the pacing. ${S.pol}: turn pacing off and look.`}]},
+   {q:'Pacing paused: no VF, still pulseless. Now?',
+    opts:[
+     {t:'Start CPR and prepare for resternotomy. In a fresh post-op patient, PEA usually means tamponade or bleeding.', ok:true,
+      fb:`${S.pol} PEA: skip to BLS and continue CPR until resternotomy. ${S.nat} STS: the cause is often something only opening the chest can fix, so the 5-minute target applies here too.`},
+     {t:'Run 20 minutes of standard ACLS before considering the chest.', fb:`${S.pol} prepares for resternotomy from the start of a PEA arrest. Time to reopening drives survival.`},
+     {t:'Give a fluid bolus and recheck in five minutes.', fb:`Volume can be part of it, but ${S.pol} says CPR now and continue until resternotomy.`}]},
+   AIRWAY, DRIPS]},
+ {id:'D', tag:'Not a code yet', cls:'urg', title:'Bleeding', blurb:'Chest tubes running bright red.',
+  wave:'tachy', strip:['HR <span class="amb">118</span>','ABP <span class="amb">88/50</span>','CT <span class="red">420/h</span>'],
+  story:'POD 0 after a Bentall, two hours out. Chest tube output has gone 300 → 350 → 420 mL in the last three hours, bright red. Hemoglobin dropped from 10.1 to 7.8.',
+  vit:['HR <b class="amb">118</b>','ABP <b class="amb">88/50</b>','CVP <b>6</b>','CI <b class="amb">1.9</b>','CT <b class="red">420 mL/h</b>'],
+  nodes:[
+   {q:'Is this a Code Blue?',
+    opts:[
+     {t:'No. Notify the provider now; this hits the policy’s bleeding triggers.', ok:true,
+      fb:`${S.pol} Policy 4a lists the triggers: sudden or trending chest tube output, hypovolemic hemodynamics, hypotension, tachycardia, low CO/CI, falling filling pressures, coagulation and hematologic abnormalities. A Code Blue is for arrest (Policy 5). ${S.els} notes some facilities reopen at ≥3 mL/kg/h for 3 hours.`},
+     {t:'Wait for the next hour’s output to confirm the trend.', fb:`Three rising hours, a falling hemoglobin and a CI of 1.9 already meet ${S.pol} triggers. Waiting is how this becomes Branch A.`},
+     {t:'Yes, call a Code Blue now.', fb:`${S.pol} reserves the Code Blue for arrest. This patient has a pulse: notify the provider and start staging. If they arrest, it becomes a code.`}]},
+   STAGE, PREP]},
+ {id:'E', tag:'Not a code yet', cls:'urg', title:'Tamponade', blurb:'Tubes go quiet, pressures equalize.',
+  wave:'tachy', strip:['HR <span class="amb">125</span>','ABP <span class="amb">82/68</span>','CT <span class="amb">10/h</span>'],
+  story:'POD 1 after CABG. Chest tube output was 120 mL/h for three hours, then 10 mL in the last hour. The pulse pressure is narrow and the neck veins are distended.',
+  vit:['HR <b class="amb">125</b>','ABP <b class="amb">82/68</b>','CVP <b class="red">18</b>','PAD <b class="red">18</b>','PAWP <b class="red">19</b>','Pulsus <b class="amb">14</b>'],
+  nodes:[
+   {q:'How do you read this?',
+    opts:[
+     {t:'Tamponade until proven otherwise. Notify the provider now.', ok:true,
+      fb:`${S.pol} Policy 4b: sudden decrease or stop in chest tube output, equalized RA, PAD and PAWP, pulsus paradoxus over 10 mmHg, narrowing pulse pressure, distended neck veins, hypotension, muffled heart sounds, low QRS voltage, altered mental status.`},
+     {t:'The bleeding has finally slowed. Good news.', fb:`A sudden stop with rising, equalized pressures means blood is collecting around the heart instead of draining. ${S.pol} lists it as a tamponade trigger.`},
+     {t:'Hypovolemia: bolus and recheck.', fb:`Filling pressures of 18–19 that match each other are the opposite of hypovolemia. Notify the provider: ${S.pol} 4b.`}]},
+   STAGE, PREP]},
+ {id:'F', tag:'Not a code yet', cls:'urg', title:'Open chest losing ground', blurb:'Esmarch and Ioban, stapled.',
+  wave:'tachy', strip:['HR <span class="amb">122</span>','ABP <span class="amb">78/52</span>','CVP <span class="red">19</span>'],
+  story:'POD 1 with delayed sternal closure. The chest is open under an Esmarch with an Ioban cover, held with staples. Pressure is sliding and the CVP is climbing.',
+  vit:['HR <b class="amb">122</b>','ABP <b class="amb">78/52</b>','CVP <b class="red">19</b>','Chest <b>open</b>'],
+  nodes:[
+   {q:'The surgeon is coming to explore. How do they get in?',
+    opts:[
+     {t:'Staple removers. Release the staples and the Esmarch and Ioban come off together. No scalpel or wire cutter needed.', ok:true,
+      fb:`${S.unit} An open chest has no skin incision to cut and no wires to cut. Have staple removers on the field. The scalpel and wire cutter are for a closed chest.`},
+     {t:'Scalpel through the Ioban, then the wire cutter.', fb:`${S.unit} There are no sternal wires in an open chest, and cutting through the dressing wastes time and risks injury. Staple removers release the Esmarch/Ioban.`},
+     {t:'Leave the dressing on and transfer to the OR.', fb:`The surgeon decides bedside vs OR. Either way, ${S.unit}: staple removers ready on the field.`}]},
+   STAGE, PREP]}
+];
+
+/* ---------- tiny monitor waveforms ---------- */
+function wave(kind){
+  let d='', x=0, y=17;
+  if(kind==='vf'){ d='M0 17'; for(x=0;x<=300;x+=6){ d+=` L${x} ${17+Math.sin(x*0.21)*9*Math.sin(x*0.033+1)+Math.sin(x*0.57)*3}`; } }
+  else if(kind==='brady'){ d='M0 20 L70 20 L74 17 L78 20 L88 20 L91 23 L94 3 L97 30 L100 20 L120 20 L126 16 L132 20 L240 20 L300 20'; }
+  else if(kind==='paced'){ d='M0 20'; for(x=0;x<300;x+=60){ d+=` L${x+10} 20 L${x+10} 2 L${x+11} 20 L${x+14} 20 L${x+18} 30 L${x+24} 8 L${x+30} 22 L${x+44} 18 L${x+52} 20 L${x+60} 20`; } }
+  else { d='M0 20'; for(x=0;x<300;x+=38){ d+=` L${x+8} 20 L${x+11} 17 L${x+14} 20 L${x+18} 20 L${x+20} 24 L${x+23} 3 L${x+26} 28 L${x+29} 20 L${x+34} 16 L${x+38} 20`; } }
+  return `<svg viewBox="0 0 300 34" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+}
+
+const pick=document.getElementById('pick');
+SCN.forEach(s=>{
+  const b=document.createElement('button'); b.className='scn'; b.type='button'; b.setAttribute('aria-pressed','false'); b.dataset.id=s.id;
+  b.innerHTML=`<div class="strip">${wave(s.wave)}<div class="row">${s.strip.map(x=>`<span>${x}</span>`).join('')}</div></div>
+   <div class="meta"><span class="tag ${s.cls}">${s.id} · ${s.tag}</span><h3>${s.title}</h3><p>${s.blurb}</p></div>`;
+  b.addEventListener('click',()=>start(s.id)); pick.appendChild(b);
+});
+
+let cur=null, step=0;
+const $=id=>document.getElementById(id);
+function start(id){
+  cur=SCN.find(s=>s.id===id); step=0;
+  document.querySelectorAll('.scn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id));
+  $('player').hidden=false;
+  $('p-title').textContent=`${cur.id} · ${cur.title}`;
+  $('vign').innerHTML=`<p class="story">${cur.story}</p><div class="vit">${cur.vit.map(v=>`<span>${v}</span>`).join('')}</div>`;
+  render(); $('player').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'start'});
+}
+function render(){
+  const n=cur.nodes[step];
+  $('dots').innerHTML=cur.nodes.map((_,i)=>`<i class="${i<step?'done':i===step?'on':''}"></i>`).join('');
+  $('q').textContent=n.q; $('fb').innerHTML=''; $('b-next').hidden=true;
+  const o=$('opts'); o.innerHTML='';
+  const order=n.opts.map((x,i)=>i).sort(()=>Math.random()-.5);
+  order.forEach((i,k)=>{
+    const x=n.opts[i]; const b=document.createElement('button'); b.type='button'; b.className='opt';
+    b.innerHTML=`<span class="k">${'ABC'[k]}</span><span>${x.t}</span>`;
+    b.addEventListener('click',()=>choose(b,x)); o.appendChild(b);
+  });
+}
+function choose(b,x){
+  if(b.disabled) return;
+  b.classList.add(x.ok?'right':'wrong');
+  $('fb').innerHTML=`<div class="fb ${x.ok?'':'no'}"><b class="v">${x.ok?'Right call':'Not this one'}</b><p>${x.fb}</p></div>`;
+  if(x.ok){
+    document.querySelectorAll('#opts .opt').forEach(o=>o.disabled=true);
+    const last=step===cur.nodes.length-1;
+    $('b-next').hidden=false;
+    $('b-next').textContent= last ? 'Open the chest →' : 'Next';
+  } else { b.disabled=true; }
+}
+$('b-next').addEventListener('click',()=>{
+  if(step<cur.nodes.length-1){ step++; render(); }
+  else { $('dots').innerHTML=cur.nodes.map(()=>'<i class="done"></i>').join(''); $('open').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); }
+});
+$('b-pick').addEventListener('click',()=>{ $('player').hidden=true; document.querySelectorAll('.scn').forEach(b=>b.setAttribute('aria-pressed','false')); pick.scrollIntoView({block:'center'}); });
+
+/* ---------- reference tabs ---------- */
+const svgTool = {
+ scalpel:'<svg viewBox="0 0 200 56"><path d="M20 30 H120" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><path d="M120 26 L170 22 Q182 28 170 34 L120 34 Z" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>',
+ wire:'<svg viewBox="0 0 200 56"><path d="M30 14 L110 30 L30 46" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="30" r="5" fill="currentColor"/><path d="M110 30 L170 22 M110 30 L170 38" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg>',
+ driver:'<svg viewBox="0 0 200 56"><circle cx="30" cy="18" r="9" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="30" cy="40" r="9" fill="none" stroke="currentColor" stroke-width="3"/><path d="M39 20 L120 28 L175 27 M39 38 L120 30 L175 31" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>',
+ retractor:'<svg viewBox="0 0 200 56"><path d="M20 30 H180" stroke="currentColor" stroke-width="5"/><path d="M60 30 V50 M60 50 H48 M140 30 V50 M140 50 H152" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><rect x="168" y="22" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="3"/></svg>',
+ staple:'<svg viewBox="0 0 200 56"><path d="M40 16 L150 26 M40 40 L150 30" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><path d="M150 26 L172 22 M150 30 L172 34" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M176 18 v20" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"/></svg>',
+ suction:'<svg viewBox="0 0 200 56"><path d="M20 40 Q60 40 90 28 L170 16" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><circle cx="172" cy="15" r="3" fill="currentColor"/></svg>',
+ paddles:'<svg viewBox="0 0 200 56"><path d="M20 16 H110 M20 40 H110" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><ellipse cx="135" cy="16" rx="22" ry="10" fill="none" stroke="currentColor" stroke-width="3"/><ellipse cx="135" cy="40" rx="22" ry="10" fill="none" stroke="currentColor" stroke-width="3"/></svg>',
+ bovie:'<svg viewBox="0 0 200 56"><path d="M10 30 Q30 46 50 30" fill="none" stroke="currentColor" stroke-width="2"/><rect x="50" y="22" width="100" height="16" rx="8" fill="none" stroke="currentColor" stroke-width="3"/><rect x="72" y="25" width="12" height="10" rx="2" fill="currentColor"/><rect x="92" y="25" width="12" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M150 30 L180 30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
+ lamp:'<svg viewBox="0 0 200 56"><ellipse cx="100" cy="30" rx="44" ry="16" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="100" cy="14" r="8" fill="currentColor"/><path d="M100 6 L84 -10 M100 6 L116 -10" stroke="currentColor" stroke-width="2"/></svg>'
+};
+function tool(k,name,body,src,ord){ return `<div class="tool">${svgTool[k]}${ord?`<span class="ord">${ord}</span>`:''}<h4>${name}</h4><p>${body}</p><div>${src}</div></div>`; }
+
+const TABS = [
+ {id:'roles', label:'Roles', html:`
+  <h3>Who does what</h3>
+  <div class="grid3">
+   <div class="box hl"><h4>Primary RN</h4><ul>
+    <li>Delegates; is prepared to page the surgeon STAT and give report.</li>
+    <li>Gets the notifications out (list below).</li>
+    <li>Has the team bring the sternotomy cart, crash cart, defibrillator, head lamp and ordered meds.</li>
+    <li>Gives a brief, pertinent report when the surgeon arrives.</li></ul><p style="margin-top:8px">${S.pol}</p></div>
+   <div class="box"><h4>Scrub RN or tech</h4><ul>
+    <li>Places the Bovie grounding pad, then hand hygiene, gown, gloves, face shield.</li>
+    <li>After prep, lays a large sterile sheet over the lower half as the back table.</li>
+    <li>Assembles sterile parts; hands off suction, pad cable, Bovie pencil and paddle cables to the circulator.</li>
+    <li>Runs sharps control in a designated sterile bowl; keeps internal paddles sterile between shocks.</li>
+    <li>Helps with bleeding control, suction, chest tubes. Hands the role off to the OR nurse or surgical resident.</li></ul><p style="margin-top:8px">${S.pol}</p></div>
+   <div class="box"><h4>Circulator RN(s)</h4><ul>
+    <li>Removes the chest dressing, minding the pacing wires.</li>
+    <li>Scrubs the incision with povidone-iodine.</li>
+    <li>Opens the tray sterile; drops wire cutters if needed.</li>
+    <li>Large-volume IV access, kept outside the field; at least two wall suctions.</li>
+    <li>Sets up the Bovie and internal defib; masks for everyone entering; gowns, caps, gloves for the team.</li>
+    <li>Completes documentation with anesthesia; stays at the bedside for volume, inotropes and lines.</li></ul><p style="margin-top:8px">${S.pol}</p></div>
+  </div>
+  <div class="grid2">
+   <div class="box"><h4>Provider-only</h4><ul><li>Internal defibrillation is performed only by a provider.</li><li>The surgeon opens the chest; anesthesia manages the airway and sedation and documents on the anesthesia record.</li></ul><p style="margin-top:8px">${S.pol}</p></div>
+   <div class="box"><h4>Notify (delegate these)</h4><ul><li>Surgeon on call, STAT, with report</li><li>Surgical resident / fellow on call</li><li>OR</li><li>Anesthesia resident and attending</li><li>Blood bank</li><li>RN supervisor</li><li>Pharmacy</li></ul><p style="margin-top:8px">${S.pol}</p></div>
+  </div>
+  <div class="box"><h4>During an arrest: the six CALS roles ${S.nat}</h4>
+   <div class="tw"><table class="t"><thead><tr><th>Role</th><th>Job</th><th>Who it usually lands on</th></tr></thead><tbody>
+    <tr><td>1 · Compressions</td><td>External CPR until the chest is open</td><td>RN / any trained staff</td></tr>
+    <tr><td>2 · Airway &amp; breathing</td><td>FiO₂ 100%, PEEP off, bag, check the tube</td><td>Anesthesia / RT</td></tr>
+    <tr><td>3 · Defib &amp; pacing</td><td>Three stacked shocks, or pace at max output</td><td>RN</td></tr>
+    <tr><td>4 · Team leader</td><td>Runs the protocol and the clock</td><td>Senior provider</td></tr>
+    <tr><td>5 · Drugs &amp; infusions</td><td>Pause and check all infusions; gives drugs as directed</td><td>RN</td></tr>
+    <tr><td>6 · ICU coordinator</td><td>Calls, cart, room traffic, the resternotomy setup</td><td>Charge / senior RN</td></tr>
+   </tbody></table></div>
+   <p class="note" style="margin-top:8px">From STS 2017 / CALS. SCU 10-214 assigns the procedure roles above; use the CALS roles to organize the first minutes of the arrest.</p></div>`},
+ {id:'prep', label:'Prep & drape', html:`
+  <h3>Prep and drape</h3>
+  <div class="call"><b>Povidone-iodine only.</b> No CHG/alcohol prep sticks. Alcohol vapor trapped under the drape is fuel for the Bovie and the defibrillator. ${S.pol} ${S.unit}</div>
+  <div class="grid2">
+   <div class="box"><h4>Before the drape</h4><ul>
+    <li>Patient flat; ventilation maintained; sedation given. ${S.pol}</li>
+    <li>Circulator removes the dressing carefully, minding the pacing wires. ${S.pol}</li>
+    <li>Circulator scrubs the incision with povidone-iodine. ${S.pol}</li>
+    <li>ECG electrodes off the sternum; defib pads and pacing wires stay connected. ${S.unit}</li>
+    <li>Blot any pooled prep at the sides and under the shoulders. ${S.unit}</li></ul></div>
+   <div class="box"><h4>The U-drape in eight moves ${S.unit}</h4><ol>
+    <li>Check the pack: REF DYNJP8301, intact, dry, in date.</li>
+    <li>SPLIT END arrow points to the head.</li>
+    <li>Folded pack’s <b>left edge on the sternal incision</b>, top edge at the notch.</li>
+    <li>First unfold lands centered; open UNFOLD ⇦ ⇨ to the arms.</li>
+    <li>Open UNFOLD ⇩ to the feet.</li>
+    <li>Find the liners on the U.</li>
+    <li>Peel; open the tails toward the head; seal to dry skin.</li>
+    <li>Check the window: notch to xiphoid. Call "draped."</li></ol>
+    <p style="margin-top:10px"><a href="https://scottbrickner.github.io/5west-knowledge-hub/u-drape-sternotomy/" target="_blank" rel="noopener"><b>Open the illustrated U-drape guide →</b></a></p></div>
+  </div>
+  <div class="box"><h4>Back table ${S.pol}</h4><p>Rooms have no space for extra tables. After the prep, the scrub lays a large sterile sheet over the patient’s lower half and sets the sterile supplies there.</p></div>`},
+ {id:'bovie', label:'Bovie', html:`
+  <h3>Bovie (electrosurgical unit)</h3>
+  <div class="call crit"><b>The Bovie machine is kept in the OR.</b> Send a runner as soon as a bedside opening is possible. ${S.pol}</div>
+  <div class="grid2">
+   <div class="box"><h4>Grounding pad (scrub places it, before gowning)</h4><ul>
+    <li>Clean, dry, hairless, well-vascularized: a large muscle mass such as the thigh.</li>
+    <li>As close to the operative site as possible.</li>
+    <li>Not over scar tissue, bony prominences, the pacer site or metal such as a hip prosthesis.</li></ul><p style="margin-top:8px">${S.pol}</p></div>
+   <div class="box"><h4>Circulator setup</h4><ol>
+    <li>Plug in the unit and turn it on.</li>
+    <li>Connect the grounding pad cable.</li>
+    <li>Drop the Bovie pencil onto the sterile field.</li>
+    <li>Connect the pencil when it’s handed off the field.</li>
+    <li>Press <b>Ready</b> under status; set as ordered.</li></ol><p style="margin-top:8px">${S.pol}</p></div>
+  </div>
+  <div class="grid3">
+   <div class="box hl"><h4>COAG</h4><p class="mono" style="font-size:26px;font-weight:600">50 W</p><p class="note">Starting setting</p></div>
+   <div class="box hl"><h4>CUT</h4><p class="mono" style="font-size:26px;font-weight:600">Blend 3 · 50 W</p><p class="note">Starting setting</p></div>
+   <div class="box"><h4>Adjust</h4><p class="mono" style="font-size:26px;font-weight:600">±10 W</p><p class="note">Increase in steps of 10 as the surgeon directs</p></div>
+  </div>
+  <div class="grid2">
+   <div class="box"><h4>While it’s in use</h4><ul>
+    <li>Pencil goes back in the holster between bursts. <span class="src nat">FDA · AORN</span></li>
+    <li>A pad (REM) alarm means fix the pad: blood, prep or sweat under it are the usual culprits. Don’t override it. <span class="src nat">Valleylab</span></li>
+    <li>Check and document the skin under the pad before and after. <span class="src nat">AORN</span></li></ul></div>
+   <div class="box"><h4>Cautery and the pacemaker</h4><ul>
+    <li>Monopolar current at the sternum runs across the heart and the epicardial wires. Cautery can inhibit a temporary pacer and fool the ECG.</li>
+    <li>During bursts, watch the <b>arterial line</b>, not the ECG. Call out lost capture or lost pulse right away.</li>
+    <li>Short bursts, under 5 seconds.</li></ul><p style="margin-top:8px"><span class="src nat">HRS/ASA 2011 · Seo 1996</span></p></div>
+  </div>`},
+ {id:'fire', label:'Fire prevention', html:`
+  <h3>Fire prevention</h3>
+  <p>This procedure puts all three sides of the fire triangle under one drape, outside the OR, with a team that does it rarely.</p>
+  <div class="tri">
+   <div class="box"><h4><span class="dot" style="background:var(--crit)"></span>Ignition</h4><ul><li>Bovie pencil</li><li>Defibrillator: internal paddles and external pads</li><li>Head lamp and other light sources</li></ul></div>
+   <div class="box"><h4><span class="dot" style="background:var(--gold)"></span>Fuel</h4><ul><li>Prep solution, especially alcohol-based</li><li>Drapes, gowns, towels, lap sponges, gauze</li><li>Body hair</li></ul></div>
+   <div class="box"><h4><span class="dot" style="background:var(--src-nat)"></span>Oxidizer</h4><ul><li>FiO₂ 100% (required by ${S.pol})</li><li>Oxygen leaking during bagging or a disconnected circuit</li><li>Oxygen pooling under the drapes</li></ul></div>
+  </div>
+  <div class="call"><b>Keck’s built-in strategy:</b> prep with povidone-iodine only. The oxygen can’t come down during an arrest, so the fuel is what we control. ${S.pol} ${S.unit}</div>
+  <div class="grid2">
+   <div class="box hl"><h4>Why povidone-iodine, in numbers</h4><ul>
+    <li>Alcohol preps (ChloraPrep, DuraPrep) need <b>≥3 minutes</b> dry on hairless skin and up to <b>1 hour</b> in hair before drapes or cautery. That can’t fit inside a 5-minute reopen. <span class="src nat">Labels</span></li>
+    <li>In lab testing, alcohol prep still flashed under cautery in <b>1 of 10</b> tests at 3 minutes and in <b>more than 1 of 4</b> when pooled. Non-alcohol prep never ignited. <span class="src nat">Jones 2017</span></li></ul></div>
+   <div class="box"><h4>Oxygen you can’t turn down</h4><ul>
+    <li>FiO₂ stays at 100% during the arrest. Control the fuel and ignition sides harder.</li>
+    <li>Keep the bag or ventilator circuit <b>connected</b> to the ETT; point exhaust away from the chest. A disconnected bag near the chest is a documented fire setup. <span class="src nat">RCUK 2025 · APSF</span></li>
+    <li>Drape so oxygen from the head end can’t channel under the drapes into the field. <span class="src nat">ASA 2013</span></li></ul></div>
+  </div>
+  <div class="grid3">
+   <div class="box"><h4>Fuel</h4><ul>
+    <li>No pooling, no soaked linens: wick pools with sterile gauze and pull wet towels from under the chest and axillae before draping.</li>
+    <li>Keep sponges moist near the cautery.</li>
+    <li>Sterile saline and a bulb syringe on the field.</li></ul><p style="margin-top:8px"><span class="src nat">ASA 2013 · FDA · Silverstein</span></p></div>
+   <div class="box"><h4>Ignition</h4><ul>
+    <li>Bovie pencil in its holster, never resting on the patient or drapes.</li>
+    <li>Lowest effective setting, confirmed with the surgeon before the first burst.</li>
+    <li>Defib pads fully stuck down: no hair gaps or folds. Poor contact causes the arcing behind defibrillator fires.</li></ul><p style="margin-top:8px"><span class="src nat">FDA · AORN · APSF 2009</span></p></div>
+   <div class="box"><h4>Say the risk out loud</h4><p>Score one point each: site above the xiphoid, open oxygen, ignition source. <b>3 = high risk.</b> A bedside resternotomy scores 2–3 every time, so name it in the huddle.</p><p style="margin-top:8px"><span class="src nat">Silverstein 2006 · TJC 2023</span></p></div>
+  </div>
+  <div class="call crit"><b>If something ignites:</b> (1) stop the flow of airway gases; (2) pull drapes and burning material off the patient; (3) put it out with saline or water, or smother it; (4) if it persists, CO₂ extinguisher, pull the alarm, close the door. Then reassess the patient, re-establish ventilation and keep the material for review. <span class="src nat">ASA 2013</span></div>
+  <div class="box"><h4>Not settled yet at Keck</h4><ul>
+   <li>Whether cautery waits until the prep is visibly dry. Entry is scalpel, wire cutter and retractor, so the Bovie often isn’t needed in the first minute.</li>
+   <li>Whether external pads stay on while internal paddles are in use. No source addresses it.</li></ul><p class="note" style="margin-top:6px">No published study covers fire or cautery during bedside resternotomy; this tab applies OR fire guidance to the bedside.</p></div>`},
+ {id:'inst', label:'Instruments', html:`
+  <h3>Key instruments for the surgeon</h3>
+  <div><div class="seg" role="group" aria-label="Chest status"><button type="button" aria-pressed="true" data-k="closed">Closed chest</button><button type="button" aria-pressed="false" data-k="open">Open chest (Esmarch/Ioban)</button></div></div>
+  <div class="inst" id="inst-closed">
+   ${tool('scalpel','Scalpel','Cuts down through the skin of the closed incision.', S.nat,'1 · skin')}
+   ${tool('wire','Wire cutter','Cuts the sternal wires. The chest can’t open without it; confirm it’s on the cart before you need it.', S.pol+' '+S.nat,'2 · wires')}
+   ${tool('driver','Heavy needle driver','Twists and pulls the wires; the backup if the wire cutter fails.', S.nat,'3 · wires')}
+   ${tool('retractor','Sternal retractor','Single-piece retractor spreads the sternum for access to the heart.', S.nat,'4 · spread')}
+   ${tool('suction','Suction ×2','At least two wall suctions, tubing connected when handed off the field.', S.pol,'')}
+   ${tool('bovie','Bovie pencil','Dropped on the field, connected by the circulator.', S.pol,'')}
+   ${tool('paddles','Internal paddles','Sterile; kept sterile between shocks by the scrub.', S.pol,'')}
+   ${tool('lamp','Head lamp','Brought to the room with the carts.', S.pol,'')}
+  </div>
+  <div class="inst" id="inst-open" hidden>
+   ${tool('staple','Staple removers','All that’s needed to get in. Removing the staples releases the Esmarch and the Ioban cover together.', S.unit,'1 · in')}
+   ${tool('suction','Suction ×2','At least two wall suctions.', S.pol,'')}
+   ${tool('bovie','Bovie pencil','Dropped on the field, connected by the circulator.', S.pol,'')}
+   ${tool('paddles','Internal paddles','Sterile; provider-only.', S.pol,'')}
+   ${tool('lamp','Head lamp','Brought to the room with the carts.', S.pol,'')}
+  </div>
+  <p class="note">STS 2017 names the essential set: scalpel, wire cutter, heavy needle holder, single-piece retractor and sucker. The open chest has no skin to incise and no wires to cut, so the scalpel and wire cutter are for a closed chest.</p>`},
+ {id:'defib', label:'Internal defib', html:`
+  <h3>Internal defibrillation</h3>
+  <div class="call crit"><b>Provider only.</b> Never above <b>50 J</b> with internal paddles connected. ${S.pol}</div>
+  <div class="grid2">
+   <div class="box"><h4>Energy ladder (Philips biphasic)</h4>
+    <div class="ladder" aria-label="Start at 10 joules, then 20, 30, 50; maximum 50">
+     <div class="rung"><i style="height:20%"></i><b>10 J</b></div>
+     <div class="rung"><i style="height:40%"></i><b>20 J</b></div>
+     <div class="rung"><i style="height:60%"></i><b>30 J</b></div>
+     <div class="rung cap"><i style="height:100%"></i><b>50 J</b></div>
+    </div>
+    <p class="ceiling">50 J ceiling with internal paddles</p>
+    <p class="note" style="margin-top:8px">Start at 10 J ${S.pol}. CALS-ANZ uses 20 J ${S.nat}; the energy is always the provider’s order.</p></div>
+   <div class="box"><h4>Circulator steps</h4><ol>
+    <li>Plug in the defibrillator.</li>
+    <li>Remove and unplug the external paddles.</li>
+    <li>Drop the sterile internal paddles on the field.</li>
+    <li>Attach the internal paddle cable once it’s passed off the field.</li>
+    <li>Get the energy order from the provider.</li>
+    <li>Charge; tell the provider it’s charged and read the joules back.</li>
+    <li>Call "all clear" if the provider doesn’t.</li>
+    <li>Repeat as ordered.</li></ol><p style="margin-top:8px">${S.pol}</p></div>
+  </div>`},
+ {id:'after', label:'After & charting', html:`
+  <h3>After the chest is open</h3>
+  <div class="grid3">
+   <div class="box"><h4>Continuing care</h4><ul>
+    <li>Keep reporting to the surgeon: vitals, chest tube output, volume given, hemodynamics, LOC.</li>
+    <li>Clarify new orders and who talks to the family.</li>
+    <li>Prepare for transport to the OR if needed, or assist with chest tubes, sternal wires and closure at the bedside.</li></ul><p style="margin-top:8px">${S.pol}</p></div>
+   <div class="box"><h4>Clean-up</h4><ul>
+    <li>Trays back to SPD; sharps to the sharps container.</li>
+    <li>Restock the sternotomy cart.</li>
+    <li>Replacement crash cart, locked per policy.</li>
+    <li>Wash internal paddles in <b>cold water</b>; send to SPD with the trays.</li></ul><p style="margin-top:8px">${S.pol}</p></div>
+   <div class="box"><h4>Documentation</h4><ul>
+    <li>Pre- and post-procedure assessments.</li>
+    <li>Sternotomy on the <b>Code Blue Record</b>: time of each defibrillation, provider, energy, response.</li>
+    <li>Occurrence report and Code Blue evaluation.</li>
+    <li>Anesthesia documents on the anesthesia record.</li></ul><p style="margin-top:8px">${S.pol}</p></div>
+  </div>`},
+ {id:'notes', label:'Policy notes', html:`
+  <h3>Where the sources disagree, or say nothing</h3>
+  <div class="tw"><table class="t"><thead><tr><th>Topic</th><th>Keck SCU 10-214</th><th>Elsewhere</th></tr></thead><tbody>
+   <tr><td>Skin prep</td><td>Povidone-iodine</td><td>Elsevier 2025 lists chlorhexidine as preferred. Keck uses povidone-iodine only, a fire-prevention choice.</td></tr>
+   <tr><td>First internal shock</td><td>10 J, up to 50 J max</td><td>CALS-ANZ: 20 J.</td></tr>
+   <tr><td>Epinephrine</td><td>Not addressed</td><td>STS 2017: not routine during arrest unless an experienced clinician directs it. CALS-ANZ: 50–100 mcg if given. Expect micrograms.</td></tr>
+   <tr><td>Infusions</td><td>Not addressed</td><td>STS / CALS: pause and check all infusions.</td></tr>
+   <tr><td>Time to reopen</td><td>"Prepare for emergency resternotomy"</td><td>STS, ERC, CALS-ANZ: within 5 minutes. Survival 48% if opened within 10 minutes vs 12% after (Mackay 2002).</td></tr>
+   <tr><td>Bleeding threshold</td><td>Trigger list, no number</td><td>Elsevier 2025: some facilities reopen at ≥3 mL/kg/h for 3 hours.</td></tr>
+   <tr><td>Open chest (Esmarch/Ioban)</td><td>Not addressed</td><td>5 West practice: staple removers release the dressing.</td></tr>
+   <tr><td>Oxygen vs fire</td><td>FiO₂ 100%, PEEP off</td><td>Fire guidance wants open O₂ under 30%. During an arrest it can’t drop, so keep the circuit connected and control fuel and ignition. Unreconciled in the literature.</td></tr>
+   <tr><td>Cautery timing</td><td>Not addressed</td><td>Alcohol prep labels: ≥3 min dry. Keck avoids the conflict with povidone-iodine.</td></tr>
+  </tbody></table></div>`}
+];
+
+const tabs=$('tabs'), panels=$('panels');
+TABS.forEach((t,i)=>{
+  const b=document.createElement('button'); b.className='tab'; b.type='button'; b.role='tab'; b.id='t-'+t.id;
+  b.setAttribute('aria-selected', i===0); b.setAttribute('aria-controls','p-'+t.id); b.textContent=t.label;
+  b.addEventListener('click',()=>show(t.id)); tabs.appendChild(b);
+  const p=document.createElement('div'); p.className='panel'; p.id='p-'+t.id; p.setAttribute('role','tabpanel'); p.setAttribute('aria-labelledby','t-'+t.id);
+  p.innerHTML=t.html; p.hidden=i!==0; panels.appendChild(p);
+});
+function show(id){
+  TABS.forEach(t=>{ $('t-'+t.id).setAttribute('aria-selected',t.id===id); $('p-'+t.id).hidden=t.id!==id; });
+}
+tabs.addEventListener('keydown',e=>{
+  if(!['ArrowRight','ArrowLeft'].includes(e.key)) return;
+  const ids=TABS.map(t=>t.id); const cur=ids.findIndex(id=>$('t-'+id).getAttribute('aria-selected')==='true');
+  const nx=(cur+(e.key==='ArrowRight'?1:-1)+ids.length)%ids.length; show(ids[nx]); $('t-'+ids[nx]).focus();
+});
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  $('inst-closed').hidden=b.dataset.k!=='closed'; $('inst-open').hidden=b.dataset.k!=='open';
+}));
+const h=(location.hash||'').slice(1);
+if(TABS.some(t=>t.id===h)) show(h);
+</script>
+
+</body>
+</html>

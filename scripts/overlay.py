@@ -23,6 +23,13 @@ def guide_button(text="Open the illustrated U-drape guide"):
     return (f'<p><a href="{GUIDE}" target="_blank" rel="noopener"><strong>{text} &rarr;</strong></a></p>')
 
 
+WALK = "bedside-resternotomy/"
+
+
+def walk_button(text="Open the interactive bedside resternotomy walkthrough"):
+    return f'<p><a href="{WALK}" target="_blank" rel="noopener"><strong>{text} &rarr;</strong></a></p>'
+
+
 U_DRAPE_CARD = {
     "slug": "u_drape_bedside_sternotomy_protocol",
     "title": "U-Drape Placement for Bedside Sternotomy",
@@ -67,7 +74,7 @@ U_DRAPE_CARD = {
                 "AAMI PB70 Level 4, EO sterile, single use, not made with natural rubber latex.</li>"
                 "<li><strong>Who:</strong> a gowned, gloved team member places it; the circulating RN opens the pack and preps the skin per policy.</li>"
                 "<li><strong>Follow the print:</strong> the drape is labeled SPLIT END, UNFOLD ⇦ ⇨ and UNFOLD ⇩ in the order you use them.</li></ul>"
-                + guide_button()
+                + guide_button() + walk_button("Practice the whole sequence in the walkthrough")
             ),
         },
         {
@@ -121,6 +128,14 @@ U_DRAPE_CARD = {
 
 # Sections spliced into existing Dataverse cards: (target slug, insert after secCode, section)
 INJECT_SECTIONS = [
+    ("bedside_sternotomy_scenario", "S00405", {
+        "secCode": "SX0103", "heading": "Interactive walkthrough", "level": 3, "sortOrder": 2.5, "collapsible": False,
+        "bodyHtml": (
+            "<p>Six presentations, from VF to a stapled open chest losing ground, with the calls SCU 10-214 expects. "
+            "Then roles, prep and drape, Bovie, fire prevention, instruments, internal defib and charting.</p>"
+            + walk_button()
+        ),
+    }),
     ("bedside_sternotomy_scenario", "S00420", {
         "secCode": "SX0101", "heading": "7.1a Draping with the U-drape", "level": 3, "sortOrder": 17.5, "collapsible": True,
         "bodyHtml": (
