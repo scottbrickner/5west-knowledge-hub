@@ -37,7 +37,7 @@ U_DRAPE_CARD = {
         "Lay the folded pack with its left edge on the sternal incision, top edge at the notch, so the first unfold "
         "lands centered. Unfold side to side (UNFOLD ⇦ ⇨), then toward the feet (UNFOLD ⇩). "
         "Peel the liners, open the split tails toward the head, and seal the U from notch to xiphoid. "
-        "Alcohol-based prep must be dry first: fire risk with cautery and defibrillation."
+        "Prep with povidone-iodine only (SCU 10-214): no CHG/alcohol sticks, whose vapor is fuel under the drape."
     ),
     "quickAnswerHtml": (
         "<blockquote><p>Medline orthopedic split drape (REF DYNJP8301). "
@@ -45,7 +45,7 @@ U_DRAPE_CARD = {
         f"Lay the folded pack with its <strong {RED}>left edge on the sternal incision</strong>, top edge at the notch, "
         "so the first unfold lands centered. Unfold side to side (UNFOLD ⇦ ⇨), then toward the feet (UNFOLD ⇩). "
         "Peel the liners, open the split tails toward the head, and seal the U from notch to xiphoid. "
-        f"<strong {RED}>Alcohol-based prep must be dry first:</strong> fire risk with cautery and defibrillation.</p></blockquote>"
+        f"<strong {RED}>Prep with povidone-iodine only</strong> (SCU 10-214): no CHG/alcohol sticks, whose vapor is fuel under the drape.</p></blockquote>"
         + guide_button()
     ),
     "keywords": [
@@ -56,7 +56,7 @@ U_DRAPE_CARD = {
     "version": "1.0",
     "lastReviewed": "2026-10-22",
     "reviewer": "Scott Brickner, MSN, RN, CCRN",
-    "sourcePrecedence": "[Institution PolicyStat: Emergency Sternotomy and Defibrillation] → surgeon direction → Medline DYNJP8301 package labeling",
+    "sourcePrecedence": "SCU 10-214 Emergent Sternotomy and Resuscitation of the Post-Op Cardiac Surgery Patient → surgeon direction → Medline DYNJP8301 package labeling",
     "sections": [
         {
             "secCode": "SX0001", "heading": "1. Snapshot / What It Is", "level": 2, "sortOrder": 1, "collapsible": False,
@@ -75,8 +75,8 @@ U_DRAPE_CARD = {
             "bodyHtml": (
                 "<ul><li>Gown and dressings off; expose neck to umbilicus and side to side.</li>"
                 "<li>Move ECG electrodes off the sternum; keep defib pads and pacing wires connected.</li>"
-                "<li>Skin prep per policy and surgeon direction, wide across the chest.</li>"
-                f"<li><strong {RED}>Alcohol-based prep: let it dry, no pooling</strong> at the sides or under the shoulders.</li>"
+                f"<li>Skin prep with <strong {RED}>povidone-iodine only</strong>, scrubbed over the incision and wide across the chest (SCU 10-214).</li>"
+                "<li>No CHG/alcohol prep sticks: their vapor is fuel under the drape. Blot any pooling at the sides or under the shoulders.</li>"
                 "<li>Coordinate with the compressor and surgeon; prep and drape around CPR unless told to pause.</li></ul>"
             ),
         },
@@ -102,13 +102,13 @@ U_DRAPE_CARD = {
                 "<li><strong>Off center:</strong> one edge of the window sits on the sternum. Set the pack's left edge on the incision, not the middle of the pack; don't slide it after.</li>"
                 "<li><strong>Peeled too early:</strong> tape grabs the wrong spot. Peel only once the U is lined up.</li>"
                 "<li><strong>Reaching across:</strong> hands and sleeves stay above the field. Walk around instead.</li>"
-                f"<li><strong {RED}>Fire risk:</strong> pooled or wet alcohol prep under the drape plus cautery or defibrillation can ignite. The package carries a flammability caution.</li></ul>"
+                f"<li><strong {RED}>Fire risk:</strong> cautery, defibrillation and 100% oxygen meet under the drape. Keck preps with povidone-iodine only so there is no alcohol vapor for them to ignite. The package carries a flammability caution.</li></ul>"
             ),
         },
     ],
     "references": [
         {"refCode": "RX0001", "type": "policy",
-         "citation": "Keck Medicine of USC. Emergency sternotomy and defibrillation [Institutional policy, PolicyStat].", "sortOrder": 0},
+         "citation": "Keck Hospital of USC / USC Norris Cancer Hospital. (2023). *Emergent sternotomy and resuscitation of the post-op cardiac surgery patient* (Policy SCU 10-214; reviewed 10/10/2023) [Operating policy].", "sortOrder": 0},
         {"refCode": "RX0002", "type": "guideline",
          "citation": "Medline Industries, LP. (2025). *Orthopedic split drape with 6\" × 40\" split (REF DYNJP8301)* [Package labeling].", "sortOrder": 1},
     ],
@@ -126,7 +126,7 @@ INJECT_SECTIONS = [
         "bodyHtml": (
             "<p>The cart's sterile drape is the Medline orthopedic split drape (REF DYNJP8301). "
             f"<strong {RED}>SPLIT END arrow to the head; folded pack's left edge on the sternal incision</strong> so the first unfold lands centered. "
-            "Unfold ⇦ ⇨, then ⇩, peel the liners and seal the U from notch to xiphoid. Prep must be dry first.</p>"
+            "Unfold ⇦ ⇨, then ⇩, peel the liners and seal the U from notch to xiphoid. Prep with povidone-iodine only.</p>"
             + guide_button()
         ),
     }),
