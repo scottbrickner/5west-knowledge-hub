@@ -399,6 +399,13 @@ def main():
         "cards": list(cards_by_slug.values()),
     }
 
+    # repo-only cards and links (see scripts/overlay.py) — applied last so a
+    # Dataverse rebuild never wipes them
+    import sys
+    sys.path.insert(0, os.path.dirname(__file__))
+    from overlay import apply_overlay
+    apply_overlay(out)
+
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=None, separators=(",", ":"))
