@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading the Wave · Waveform Capnography in the ICU · Keck Medicine of USC</title>
+<meta name="description" content="Waveform capnography (EtCO2) reference for ICU nurses: the three levers, waveform anatomy, pattern recognition, troubleshooting, CPR and ROSC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Oswald:wght@700&family=Source+Sans+3:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#FFFFFF; --surface:#FFFFFF; --ink:#000000; --body-c:#333333; --ink-2:#555555; --ink-3:#757575;
+  --rule:#CCCCCC; --rule-2:#E7E7E7; --soft:#F7F7F7;
+  --cardinal:#990000; --cardinal-tint:#F7E4E4; --gold:#FFCC00; --gold-ink:#9A7B00;
+  --amber:#9A7B00; --amber-bar:#DDBC68; --amber-tint:#FFF4CC; --green:#00695C; --green-bar:#7FBBBE; --green-tint:#DFF1F1;
+  --navy:#2E6A8A; --navy-bar:#689CB8; --navy-tint:#EAF2F7;
+  --mon-bg:#07090B; --mon-grid:#1A2027; --ecg:#3CE36B; --pap:#FFD93B; --cvp:#48C6FF; --pcwp:#FF8FD1;
+  --u:8px; --maxw:1280px;
+  --numeral:"Oswald","Archivo Black","Arial Black",sans-serif;
+  --display:"Montserrat","Segoe UI",system-ui,sans-serif;
+  --body:"Source Sans 3","Source Sans Pro","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--body-c);font:17px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+a{color:var(--cardinal)}
+.accent-bar{height:4px;background:var(--cardinal)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px}
+@media (max-width:720px){.wrap{padding:0 16px}}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.95);backdrop-filter:saturate(1.2) blur(8px);border-bottom:1px solid var(--rule)}
+.topbar .wrap{display:flex;align-items:center;gap:16px;height:56px}
+.brand{font:900 13px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--ink);text-decoration:none;white-space:nowrap}
+.brand span{color:var(--cardinal)}
+.topnav{display:flex;gap:4px;margin-left:auto;overflow:hidden}
+.topnav a{font:600 13px/1 var(--body);color:var(--ink-2);text-decoration:none;padding:8px 10px;border-radius:4px;white-space:nowrap}
+.topnav a b{font:900 11px var(--body);color:var(--ink-3);margin-right:6px}
+.topnav a:hover,.topnav a.active{background:var(--surface);color:var(--ink)}
+.topnav a.active b{color:var(--cardinal)}
+.burger{display:none;margin-left:auto;width:44px;height:44px;border:0;background:none;cursor:pointer;border-radius:4px}
+.burger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px auto}
+@media (max-width:1080px){.topnav{display:none}.burger{display:block}}
+.drawer{position:fixed;inset:0;z-index:60;display:none}
+.drawer.open{display:block}
+.drawer .scrim{position:absolute;inset:0;background:rgba(20,16,12,.35)}
+.drawer nav{position:absolute;right:0;top:0;bottom:0;width:min(340px,86vw);background:var(--surface);padding:24px;border-left:6px solid var(--cardinal);overflow:auto}
+.drawer nav a{display:flex;gap:16px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--rule-2);text-decoration:none;color:var(--ink);font-weight:600}
+.drawer nav a b{font:700 16px var(--numeral);color:var(--cardinal);width:24px}
+.drawer .close{float:right;border:0;background:none;font:600 14px var(--body);cursor:pointer;padding:8px;color:var(--ink-2)}
+
+/* ---------- hero ---------- */
+.hero{padding:56px 0 64px;border-bottom:1px solid var(--rule)}
+.series{font:700 12px/1.4 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);display:flex;gap:10px;flex-wrap:wrap}
+.series i{font-style:normal;color:var(--cardinal)}
+.hero h1{font:800 clamp(44px,7vw,92px)/1 var(--display);letter-spacing:-.03em;color:var(--ink);margin:20px 0 16px}
+.hero h1 em{font-style:normal;color:var(--cardinal)}
+.hero .thesis{font-size:22px;color:var(--ink-3);margin:0 0 40px}
+.hgrid{display:grid;grid-template-columns:7fr 5fr;gap:48px;margin-bottom:32px}
+.hero .lede{font-size:19px;line-height:1.55;color:var(--body-c);margin:0}
+.facts{margin:0;border-top:2px solid var(--ink)}
+.facts div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--rule-2);font-size:15px}
+.facts dt{color:var(--ink-3)} .facts dd{margin:0;font-weight:700;color:var(--ink);text-align:right}
+@media (max-width:860px){.hgrid{grid-template-columns:1fr;gap:24px}.hero{padding:32px 0 48px}}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:24px}
+/* ---------- sections ---------- */
+section.sec{padding:72px 0 80px}
+.sgrid{display:grid;grid-template-columns:15% minmax(0,1fr);column-gap:3%}
+.rail{border-right:1px solid var(--rule);padding-right:16px}
+.rail .in{position:sticky;top:88px;display:flex;flex-direction:column;gap:20px}
+.eyebrow{font:700 12px/1.3 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--cardinal)}
+.idx{font:700 112px/.85 var(--numeral);color:var(--ink);letter-spacing:-.02em}
+.tick{display:block;width:40px;height:4px;background:var(--cardinal);margin-top:10px}
+.content{min-width:0}
+.cbar{height:6px;background:var(--cardinal);margin-bottom:28px}
+.chead{display:grid;grid-template-columns:1fr auto;gap:8px 24px;align-items:start;margin-bottom:40px}
+.chead h2{font:800 clamp(28px,3.2vw,40px)/1.1 var(--display);color:var(--ink);letter-spacing:-.015em;margin:0}
+.chead .thesis{grid-column:1/-1;font-size:19px;color:var(--ink-3);margin:0;max-width:62ch}
+.pill{font:900 11px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;border-radius:999px;color:#fff;background:var(--cardinal);white-space:nowrap;margin-top:6px}
+.pill.stretch{background:var(--ink-3)}
+@media (max-width:900px){
+  .sgrid{grid-template-columns:1fr}
+  .rail{border-right:0;border-bottom:1px solid var(--rule);padding:0 0 12px;margin-bottom:20px}
+  .rail .in{position:static;flex-direction:row;align-items:flex-end;justify-content:space-between}
+  .idx{font-size:64px}.tick{display:none}
+  section.sec{padding:48px 0 56px}
+}
+h3{font:700 20px/1.2 var(--body);color:var(--ink);margin:0 0 12px}
+h4{font:700 12px/1.2 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin:0 0 8px}
+.kicker{font:700 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--cardinal);margin-bottom:12px}
+p{margin:0 0 12px}
+.sub{color:var(--ink-2)}
+.block{margin-top:48px}
+.block:first-child{margin-top:0}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:6px;font:700 11px/1 var(--body);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:3px;border:1px solid currentColor;white-space:nowrap;vertical-align:middle}
+.chip.rn{color:#fff;background:var(--ink);border-color:var(--ink)}
+.chip.verify{color:var(--amber);background:var(--amber-tint);border-color:transparent}
+.chip.prov{color:var(--cardinal);background:var(--cardinal-tint);border-color:transparent}
+.chip.pol{color:var(--navy);background:var(--navy-tint);border-color:transparent}
+.chip.now{color:#fff;background:var(--cardinal);border-color:var(--cardinal)}
+.chip.fix{color:var(--amber);border-color:var(--amber)}
+.chip.ok{color:var(--green);background:var(--green-tint);border-color:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;padding:16px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);font-size:13px;color:var(--ink-2)}
+.legend span{display:flex;gap:8px;align-items:center}
+
+/* ---------- cards / panels ---------- */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.cards.two{grid-template-columns:repeat(2,1fr)}
+.cards.four{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--surface);padding:24px}
+.card .big{font:900 34px/1 var(--body);color:var(--ink);letter-spacing:-.02em;margin:8px 0}
+.card p{font-size:15px;color:var(--ink-2)}
+.card ul,.sbar ul{margin:0;padding:0;list-style:none;font-size:15px}
+.card ul li,.sbar ul li{position:relative;padding-left:16px}
+.card ul li::before,.sbar ul li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;background:var(--cardinal)}
+.card li{margin:4px 0}
+@media (max-width:860px){.cards,.cards.four{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.cards,.cards.two,.cards.four{grid-template-columns:1fr}}
+.callout{border-left:5px solid var(--cardinal);background:#FBF0F0;padding:18px 24px;margin:24px 0}
+.callout.amber{border-color:var(--amber-bar);background:var(--amber-tint)}
+.callout.navy{border-color:var(--navy-bar);background:var(--navy-tint)}
+.callout .ml{font:900 11px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--cardinal);margin-bottom:8px}
+.callout.amber .ml{color:var(--amber)} .callout.navy .ml{color:var(--navy)}
+.callout p{color:var(--ink)}
+.callout p:last-child{margin:0}
+.callout strong{font-weight:700}
+
+/* ---------- catheter ---------- */
+.hubs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:1100px){.hubs{grid-template-columns:repeat(2,1fr)}}
+.caps{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule-2);border:1px solid var(--rule-2);margin-top:-8px}
+.cap{display:flex;gap:14px;align-items:flex-start;background:#fff;padding:16px 20px;font-size:14.5px}
+.cap b{color:var(--ink)}
+.cap div>b:first-child{display:block;margin-bottom:2px}
+.cap .dot{flex:0 0 18px;height:18px;border-radius:50%;margin-top:2px}
+@media (max-width:640px){.caps{grid-template-columns:1fr}}
+.fig{margin:0;border:1px solid var(--rule-2);background:#fff}
+.fig img{display:block;width:100%;height:auto;padding:16px}
+.fig figcaption{padding:16px 24px 20px;border-top:1px solid var(--rule-2);font-size:14.5px;color:var(--body-c)}
+.fig figcaption b{color:var(--ink)}
+.fig .credit{display:block;margin-top:10px;font-size:12.5px;color:var(--ink-3)}
+.fig .credit a{color:var(--ink-3)}
+.hub{display:grid;grid-template-columns:40px 1fr;gap:16px;align-items:start;background:var(--surface);border:1px solid var(--rule);padding:20px}
+.hub .sw{width:40px;height:40px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
+.hub h3{font-size:17px;margin:2px 0 6px}
+.hub p{font-size:14px;color:var(--ink-2);margin:0 0 6px}
+.hub .do{font-size:13px;font-weight:600;color:var(--ink)}
+@media (max-width:640px){.hubs{grid-template-columns:1fr}}
+.ruler{margin-top:24px;background:var(--surface);border:1px solid var(--rule);padding:24px}
+.ruler svg{width:100%;height:auto;display:block}
+
+/* ---------- steps ---------- */
+.phases{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;counter-reset:step}
+.phase{border-top:2px solid var(--ink);padding-top:16px}
+.phase h3{font-size:17px;display:flex;justify-content:space-between;align-items:baseline}
+.phase h3 small{font:700 11px var(--body);letter-spacing:.1em;color:var(--ink-3)}
+.phase ol{list-style:none;margin:0;padding:0}
+.phase li{counter-increment:step;position:relative;padding:10px 0 10px 36px;border-bottom:1px solid var(--rule-2);font-size:14.5px}
+.phase li::before{content:counter(step,decimal-leading-zero);position:absolute;left:0;top:10px;font:900 13px var(--body);color:var(--cardinal)}
+.phase li b{font-weight:700}
+@media (max-width:1000px){.phases{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.phases{grid-template-columns:1fr}}
+
+/* ---------- monitor ---------- */
+.modes{display:flex;flex-wrap:wrap;gap:8px 24px;margin-bottom:16px}
+.modes .grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.modes .grp>span{font:700 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-right:4px}
+.mbtn{font:600 14px var(--body);padding:10px 14px;min-height:40px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);border-radius:4px;cursor:pointer}
+.mbtn:hover{border-color:var(--ink)}
+.mbtn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.mbtn.prob[aria-pressed="true"]{background:var(--cardinal);border-color:var(--cardinal)}
+.mbtn:focus-visible,.mini:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.viewer{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:1000px){.viewer{grid-template-columns:1fr}}
+.monitor{background:var(--mon-bg);position:relative;padding:12px 12px 12px 12px;min-height:340px;display:flex;flex-direction:column}
+.mon-top{display:flex;justify-content:space-between;align-items:center;font:600 12px var(--body);color:#8C96A3;letter-spacing:.06em;margin-bottom:6px}
+.alarm{font:900 12px var(--body);letter-spacing:.08em;color:#fff;background:#D0021B;padding:4px 8px;border-radius:2px;visibility:hidden}
+.alarm.on{visibility:visible;animation:blink 1s steps(2,start) infinite}
+.alarm.yellow{background:#E8B400;color:#111}
+@keyframes blink{to{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.alarm.on{animation:none}}
+.mon-body{display:grid;grid-template-columns:1fr 132px;gap:8px;flex:1}
+.mon-body canvas{width:100%;height:100%;min-height:290px;display:block}
+.readouts{display:flex;flex-direction:column;gap:10px;justify-content:space-between;padding:4px 0}
+.ro{font-family:var(--display)}
+.ro .lbl{font:700 12px var(--body);letter-spacing:.06em}
+.ro .val{font:700 30px/1 var(--body);letter-spacing:-.02em;margin-top:2px}
+.ro .mean{font:600 18px var(--body)}
+.ro.ecg{color:var(--ecg)} .ro.pres{color:var(--pap)}
+.mon-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.mini{font:600 12px var(--body);background:#1A2027;color:#C9D1DB;border:1px solid #2A333D;border-radius:3px;padding:6px 10px;cursor:pointer}
+.mon-foot small{color:#6D7784;font-size:11px}
+@media (max-width:560px){.mon-body{grid-template-columns:1fr}.readouts{flex-direction:row;flex-wrap:wrap;gap:16px}.mon-body canvas{min-height:230px}}
+.info{background:var(--surface);padding:24px}
+.info .tag{margin-bottom:12px}
+.info h3{font-size:22px}
+.info dl{margin:16px 0 0}
+.info dt{font:700 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:16px}
+.info dd{margin:4px 0 0;font-size:14.5px}
+.info dd.range{font:900 24px var(--body);color:var(--ink);letter-spacing:-.01em}
+.sq{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:24px}
+.sq figure{margin:0;background:var(--surface);padding:20px}
+.sq svg{width:100%;height:96px;display:block;background:#FBFAF8;border:1px solid var(--rule-2)}
+.sq figcaption{margin-top:12px;font-size:14px}
+.sq figcaption b{font-weight:700}
+.sq figcaption b:first-child{display:block;font:900 16px var(--body);color:var(--ink);margin-bottom:4px}
+@media (max-width:720px){.sq{grid-template-columns:1fr}}
+
+/* ---------- trouble ---------- */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.trouble{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media (max-width:760px){.trouble{grid-template-columns:1fr}}
+.tcard{background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--amber);padding:24px;display:flex;flex-direction:column}
+.tcard.now{border-top-color:var(--cardinal)}
+.tcard.fixit{border-top-color:var(--amber)}
+.tcard header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}
+.tcard h3{font-size:19px;margin:0}
+.tcard .see{font-size:14.5px;color:var(--ink-2);margin-bottom:12px}
+.tcard ol,.tcard ul{margin:0 0 12px;padding-left:20px;font-size:14.5px}
+.tcard li{margin:5px 0}
+.tcard .pacu{margin-top:auto;padding:12px 14px;background:var(--soft);font-size:13.5px;border-left:3px solid var(--ink)}
+.tcard .pacu b{font:700 11px var(--body);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:4px}
+.tcard[hidden]{display:none}
+
+/* ---------- tables ---------- */
+.tbl{width:100%;border-collapse:collapse;background:var(--surface);font-size:14.5px}
+.tbl th{font:700 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);text-align:left;padding:12px 16px;border-bottom:2px solid var(--ink);background:var(--soft)}
+.tbl td{padding:12px 16px;border-bottom:1px solid var(--rule-2);vertical-align:top}
+.tbl td.v{font:900 16px var(--body);color:var(--ink);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:0}
+.tscroll{overflow-x:auto;border:1px solid var(--rule)}
+.formula{font:600 14px/1.5 ui-monospace,"Cascadia Mono","SF Mono",Consolas,monospace;background:var(--soft);padding:2px 6px;border-radius:3px;white-space:nowrap}
+.flist{display:grid;grid-template-columns:repeat(2,1fr);gap:0 24px;margin:0;padding:0;list-style:none}
+.flist li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule-2);font-size:14.5px;flex-wrap:wrap}
+@media (max-width:760px){.flist{grid-template-columns:1fr}}
+
+/* ---------- SBAR ---------- */
+.sbar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.sbar>div{background:var(--surface);padding:24px}
+.sbar .L{font:700 52px/1 var(--numeral);color:var(--cardinal)}
+.sbar h3{font-size:15px;margin:8px 0 12px;text-transform:uppercase;letter-spacing:.08em}
+
+.sbar li{margin:5px 0}
+@media (max-width:1000px){.sbar{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.sbar{grid-template-columns:1fr}}
+.checks{columns:2;column-gap:32px;margin:0;padding:0;list-style:none}
+.checks li{break-inside:avoid;padding:10px 0 10px 32px;position:relative;border-bottom:1px solid var(--rule-2);font-size:14.5px}
+.checks li::before{content:"";position:absolute;left:0;top:12px;width:16px;height:16px;border:2px solid var(--ink);border-radius:2px}
+@media (max-width:700px){.checks{columns:1}}
+
+/* ---------- scope toggles (author-controlled) ---------- */
+body:not(.scope-wedge) .wedge-only{display:none}
+body.scope-wedge .wedge-hidden{display:none}
+
+/* ---------- footer ---------- */
+footer{padding:64px 0 48px;background:var(--ink);color:#CFC9C0}
+footer .grid>div{grid-column:span 4}
+footer h4{color:#fff}
+footer p,footer li{font-size:13px}
+footer ol{padding-left:18px;margin:0}
+footer li{margin:6px 0}
+footer .sig{font:800 22px var(--display);color:#fff;letter-spacing:-.01em}
+footer .fine{border-top:1px solid #3A3631;margin-top:40px;padding-top:20px;font-size:12px;color:#9C958B;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{color:var(--gold)}
+@media (max-width:860px){footer .grid>div{grid-column:1/-1}}
+
+@media print{
+  .topbar,.drawer,.modes,.mon-foot,.filters{display:none!important}
+  body{background:#fff}
+  section.sec{padding:24px 0;break-inside:avoid-page}
+  .sec-head,.sec-body{grid-column:1/-1}
+  .monitor{min-height:0}
+}
+
+
+/* ================= capnography additions ================= */
+:root{--co2:#F5D90A;--co2-dim:#6B5F12;--spo2:#48C6FF}
+.lever-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.lever{background:#fff;padding:24px}
+.lever .L{font:700 44px/1 var(--numeral);color:var(--cardinal)}
+.lever h3{margin:10px 0 4px}
+.lever .role{font-size:14px;color:var(--ink-3);margin-bottom:12px}
+.lever .ud{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px}
+.lever .ud b{display:block;font:700 11px var(--body);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.lever .ud .dn b{color:var(--navy)} .lever .ud .up b{color:var(--cardinal)}
+@media (max-width:860px){.lever-grid{grid-template-columns:1fr}}
+
+.sim{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:24px}
+@media (max-width:1000px){.sim{grid-template-columns:1fr}}
+.ctl{background:#fff;padding:24px}
+.ctl .row{margin:0 0 18px}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;font:700 13px var(--body);color:var(--ink);margin-bottom:6px}
+.ctl label small{font:600 12px var(--body);color:var(--ink-3);letter-spacing:.02em}
+.ctl label output{font:900 15px var(--body);color:var(--cardinal)}
+.ctl input[type=range]{width:100%;accent-color:var(--cardinal);height:28px}
+.ctl .lv{font:700 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:20px 0 8px;padding-top:12px;border-top:1px solid var(--rule-2)}
+.ctl .lv:first-child{margin-top:0;padding-top:0;border:0}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.presets .mbtn{font-size:13px;padding:8px 10px;min-height:36px}
+.qbox{border-left:5px solid var(--gold);background:var(--amber-tint);padding:14px 18px;margin-top:16px;font-size:15px;color:var(--ink);min-height:84px}
+.qbox b{display:block;font:900 11px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:6px}
+.abg{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#2A333D;border:1px solid #2A333D;margin-top:8px}
+.abg div{background:#0E1318;padding:8px 10px;color:#C9D1DB;font:600 11px var(--body);letter-spacing:.06em;text-transform:uppercase}
+.abg div span{display:block;font:700 22px/1.1 var(--body);letter-spacing:-.01em;text-transform:none;color:#fff;margin-top:2px}
+.abg.hidden div span{filter:blur(7px)}
+.sim .mon-body{flex:none}
+.sim .mon-body canvas{height:340px;min-height:0}
+@media (max-width:560px){.sim .mon-body canvas{height:230px}}
+.ro.co2{color:var(--co2)} .ro.rr{color:#E8EEF5}
+.ro .unit{font:600 11px var(--body);color:#8C96A3;margin-left:4px}
+.scale{font:600 10px var(--body);color:#6D7784}
+
+/* anatomy */
+.anat{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:1000px){.anat{grid-template-columns:1fr}}
+.anat .pic{background:var(--mon-bg);padding:16px}
+.anat svg{width:100%;height:auto;display:block}
+.anat .ph{cursor:pointer}
+.anat .ph rect{fill:transparent;transition:fill .15s}
+.anat .ph:hover rect,.anat .ph.on rect{fill:rgba(255,204,0,.13)}
+.anat .ph text{font:700 13px "Source Sans 3",sans-serif;fill:#8C96A3}
+.anat .ph.on text{fill:var(--gold)}
+.phbtns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.gap{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:24px}
+.gap>div{background:#fff;padding:20px}
+.gap .num{font:900 28px/1 var(--body);color:var(--ink);letter-spacing:-.02em;margin:6px 0}
+@media (max-width:760px){.gap{grid-template-columns:1fr}}
+
+/* gallery quiz */
+.quiz{display:none;margin-top:16px}
+.quiz.on{display:block}
+.quiz .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.quiz .opts .mbtn{text-align:left}
+.quiz .opts .mbtn.right{background:var(--green);border-color:var(--green);color:#fff}
+.quiz .opts .mbtn.wrong{background:var(--cardinal-tint);border-color:var(--cardinal);color:var(--cardinal)}
+.quiz .score{font:700 13px var(--body);color:var(--ink-3);margin-top:10px}
+@media (max-width:560px){.quiz .opts{grid-template-columns:1fr}}
+.hidelabels .lbl-hide{filter:blur(8px);user-select:none}
+.std{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:16px 0 0;font-size:14.5px}
+.std dt{font:900 11px/1.9 var(--body);letter-spacing:.1em;text-transform:uppercase}
+.std dt.s{color:var(--navy)} .std dt.t{color:var(--amber)} .std dt.d{color:var(--cardinal)}
+.std dd{margin:0}
+
+/* cpr */
+.cpr{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:1000px){.cpr{grid-template-columns:1fr}}
+.cpr .monitor canvas.trend{min-height:150px}
+.cpr .monitor canvas.live{min-height:120px}
+.cpr .stack{display:grid;grid-template-rows:auto 150px auto 110px;gap:4px;flex:1}
+.cpr .stack canvas{width:100%;height:100%;display:block}
+.cpr .monlbl{font:700 11px var(--body);letter-spacing:.1em;text-transform:uppercase;color:#8C96A3}
+.cprlog{font-size:14px;color:var(--ink);background:var(--soft);padding:12px 14px;min-height:64px;margin-top:12px;border-left:3px solid var(--ink)}
+
+/* cases */
+.case{background:#fff;border:1px solid var(--rule);border-top:4px solid var(--ink);padding:24px;margin-bottom:24px}
+.case .vit{display:flex;flex-wrap:wrap;gap:6px 18px;font:700 14px var(--body);color:var(--ink);padding:10px 0;border-top:1px solid var(--rule-2);border-bottom:1px solid var(--rule-2);margin:12px 0 16px}
+.case .vit span{color:var(--ink-3);font-weight:600;margin-right:4px}
+.case .step{margin-top:16px}
+.case .step[hidden]{display:none}
+.case .opts{display:grid;gap:8px;margin-top:8px}
+.case .opts .mbtn{text-align:left;font-weight:600}
+.case .opts .mbtn.right{background:var(--green);border-color:var(--green);color:#fff}
+.case .opts .mbtn.wrong{background:var(--cardinal-tint);border-color:var(--cardinal);color:var(--cardinal)}
+.case .fb{margin-top:10px;font-size:15px;padding:12px 16px;background:var(--soft);border-left:3px solid var(--green)}
+.case .fb.bad{border-left-color:var(--cardinal)}
+.case .fb[hidden]{display:none}
+.case canvas{width:100%;height:120px;display:block;background:var(--mon-bg);margin:4px 0 0}
+
+/* policy crosswalk */
+.polgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.polgrid>div{background:#fff;padding:20px}
+.polgrid h3{font-size:16px;margin-bottom:6px}
+.polgrid p{font-size:14.5px;color:var(--ink-2);margin:0}
+@media (max-width:760px){.polgrid{grid-template-columns:1fr}}
+a.polink{font-weight:700}
+@media (prefers-reduced-motion:reduce){.anat .ph rect{transition:none}}
+</style>
+</head>
+<body>
+<!-- AUTHOR NOTE: Keck policy links are set once in POLICY_LINKS at the top of the <script>. Public page shows policy NUMBERS, not Keck values (FP Hub rule). Keck values live on the printed one-pager. -->
+<div class="accent-bar"></div>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">Reading the <span>Wave</span></a>
+    <nav class="topnav" aria-label="Sections">
+      <a href="#levers"><b>01</b>Levers</a>
+      <a href="#anatomy"><b>02</b>Anatomy</a>
+      <a href="#spot"><b>03</b>Spot it</a>
+      <a href="#trouble"><b>04</b>Trouble</a>
+      <a href="#cpr"><b>05</b>CPR &amp; ROSC</a>
+      <a href="#cases"><b>06</b>Cases</a>
+      <a href="#policy"><b>07</b>Policy</a>
+    </nav>
+    <button class="burger" aria-label="Open section menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="scrim"></div>
+  <nav aria-label="Sections">
+    <button class="close" aria-label="Close menu">Close ✕</button>
+    <div class="kicker" style="margin-top:8px">Sections</div>
+    <a href="#levers"><b>01</b>Three levers</a>
+    <a href="#anatomy"><b>02</b>Waveform anatomy</a>
+    <a href="#spot"><b>03</b>Spot it</a>
+    <a href="#trouble"><b>04</b>See · Think · Do</a>
+    <a href="#cpr"><b>05</b>CPR &amp; ROSC</a>
+    <a href="#cases"><b>06</b>Cases</a>
+    <a href="#policy"><b>07</b>Keck policy crosswalk</a>
+  </nav>
+</div>
+
+<main id="top">
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap sgrid">
+    <aside class="rail"><div class="in"><div class="eyebrow">ICU<br>Respiratory</div><div><div class="idx">00</div><i class="tick"></i></div></div></aside>
+    <div class="content">
+      <div class="cbar"></div>
+      <div class="series"><span>Keck Medicine of USC</span><i>·</i><span>Critical Care Education</span><i>·</i><span>Waveform Capnography</span></div>
+      <h1>Reading the <em>Wave.</em></h1>
+      <p class="thesis">One number, one shape, three levers. It tells you before the SpO₂ does.</p>
+      <div class="hgrid">
+        <p class="lede">A working reference for ICU nurses caring for intubated patients on continuous waveform capnography. Know what moves the number, read the shape, act on what you see, and use EtCO₂ to coach CPR and catch ROSC.</p>
+        <dl class="facts">
+          <div><dt>Who</dt><dd>Intubated, ventilated ICU patients</dd></div>
+          <div><dt>Sampling</dt><dd>Mainstream or sidestream</dd></div>
+          <div><dt>Textbook normal</dt><dd>35–45 mmHg</dd></div>
+          <div><dt>Keck range &amp; alarms</dt><dd><a class="polink" data-pol="CP3-170" href="#policy">CP 3-170</a></dd></div>
+          <div><dt>Monitor</dt><dd>Philips IntelliVue</dd></div>
+          <div><dt>Core path</dt><dd>~15 minutes · 01 → 04</dd></div>
+        </dl>
+      </div>
+      <div class="callout amber" style="margin-top:0">
+        <div class="ml">First time here?</div>
+        <p>Work through the sections tagged <b>CORE</b>, 01 to 04. In <b>03 Spot it</b>, turn on <b>Hide labels</b> and keep going until you can name every pattern cold. At the bedside, start at <b>04 See · Think · Do</b>.</p>
+      </div>
+      <div class="legend">
+        <span><i class="pill" style="margin:0">Core</i> Must-know for every ICU RN</span>
+        <span><i class="pill stretch" style="margin:0">Deeper</i> Codes, cases, leaders</span>
+        <span><i class="chip rn">RN</i> Nursing action</span>
+        <span><i class="chip prov">Call</i> Provider / RT now</span>
+        <span><i class="chip pol">Keck policy</i> Check the policy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 01 LEVERS ================= -->
+<section class="sec" id="levers">
+  <div class="wrap sgrid">
+    <aside class="rail"><div class="in"><div class="eyebrow">The physiology</div><div><div class="idx">01</div><i class="tick"></i></div></div></aside>
+    <div class="content">
+      <div class="cbar"></div>
+      <header class="chead"><h2>Three levers move the number</h2><span class="pill">CORE</span><p class="thesis">EtCO₂ tracks ventilation, but it isn't only a lung number. It's what's left after the body makes CO₂, the blood carries it, and the lungs dump it.</p></header>
+
+      <div class="block lever-grid">
+        <div class="lever">
+          <div class="L">M</div><h3>Metabolism</h3><div class="role">Makes the CO₂</div>
+          <div class="ud"><div class="dn"><b>↓ EtCO₂</b>Hypothermia, sedation, analgesia, paralysis, NPO</div><div class="up"><b>↑ EtCO₂</b>Fever, shivering, pain, seizures, sepsis, malignant hyperthermia</div></div>
+        </div>
+        <div class="lever">
+          <div class="L">P</div><h3>Perfusion</h3><div class="role">Delivers the CO₂ to the lungs</div>
+          <div class="ud"><div class="dn"><b>↓ EtCO₂</b>Low cardiac output, hypovolemia, hemorrhage, massive PE, cardiac arrest</div><div class="up"><b>↑ EtCO₂</b>Cardiac output restored with ventilation unchanged (ROSC, after a fluid bolus)</div></div>
+        </div>
+        <div class="lever">
+          <div class="L">V</div><h3>Ventilation</h3><div class="role">Removes the CO₂</div>
+          <div class="ud"><div class="dn"><b>↓ EtCO₂</b>Hyperventilation (rate or tidal volume up), anxiety, pain</div><div class="up"><b>↑ EtCO₂</b>Hypoventilation, lower vent rate, oversedation, COPD</div></div>
+        </div>
+      </div>
+      <div class="callout navy">
+        <div class="ml">Keck · CP 3-170, Appendix A</div>
+        <p>The policy breaks EtCO₂ changes down the same way: <strong>metabolism, circulation, respiratory system.</strong> When the number moves, ask which lever moved.</p>
+      </div>
+
+      <div class="block">
+        <div class="kicker">Try it</div>
+        <h3>Pull the levers. Watch the wave.</h3>
+        <p class="sub">Pick a bedside situation or drag the sliders. The monitor shows EtCO₂; tap <b>Reveal ABG</b> to see the PaCO₂ it's hiding. The model is simplified for teaching, not for titrating a real patient.</p>
+        <div class="sim">
+          <div class="monitor" aria-label="Simulated capnography monitor">
+            <div class="mon-top"><span>CO₂ · SIMULATED</span><span class="alarm" id="simAlarm">EtCO₂</span></div>
+            <div class="mon-body">
+              <canvas id="simCanvas" aria-hidden="true"></canvas>
+              <div class="readouts">
+                <div class="ro co2"><div class="lbl">EtCO₂</div><div class="val"><span id="simEt">--</span><span class="unit">mmHg</span></div></div>
+                <div class="ro rr"><div class="lbl">awRR</div><div class="val"><span id="simRR">--</span><span class="unit">/min</span></div></div>
+                <div class="ro" style="color:#C9D1DB"><div class="lbl">Scale</div><div class="scale">0–<span id="simScale">60</span> mmHg</div></div>
+              </div>
+            </div>
+            <div class="abg hidden" id="abg"><div>PaCO₂<span id="abgPa">--</span></div><div>EtCO₂<span id="abgEt">--</span></div><div>Gap<span id="abgGap">--</span></div></div>
+            <div class="mon-foot"><button class="mini" id="abgBtn" aria-pressed="false">Reveal ABG</button><small>Breath-by-breath, 0–60 mmHg auto-scale</small></div>
+          </div>
+          <div class="ctl">
+            <div class="lv">Bedside situations</div>
+            <div class="presets" id="presets"></div>
+            <div class="lv">Metabolism</div>
+            <div class="row"><label for="sMet">CO₂ production <output id="oMet">100%</output></label><input type="range" id="sMet" min="60" max="170" step="5" value="100"><small class="sub" style="font-size:12px">cold · sedated ← → fever · shivering</small></div>
+            <div class="lv">Perfusion</div>
+            <div class="row"><label for="sCO">Cardiac output <output id="oCO">100%</output></label><input type="range" id="sCO" min="0" max="140" step="5" value="100"></div>
+            <div class="lv">Ventilation</div>
+            <div class="row"><label for="sRR">Respiratory rate <output id="oRR">12</output></label><input type="range" id="sRR" min="4" max="36" step="1" value="12"></div>
+            <div class="row"><label for="sVT">Tidal volume <output id="oVT">500 mL</output></label><input type="range" id="sVT" min="200" max="800" step="10" value="500"></div>
+            <div class="qbox" id="qbox" aria-live="polite"><b>Bedside question</b>Pick a situation to start.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 02 ANATOMY ================= -->
+<section class="sec" id="anatomy">
+  <div class="wrap sgrid">
+    <aside class="rail"><div class="in"><div class="eyebrow">The shape</div><div><div class="idx">02</div><i class="tick"></i></div></div></aside>
+    <div class="content">
+      <div class="cbar"></div>
+      <header class="chead"><h2>Waveform anatomy</h2><span class="pill">CORE</span><p class="thesis">Every abnormal pattern is a normal breath with one piece broken. Learn the four pieces.</p></header>
+      <div class="phbtns modes" id="phbtns"></div>
+      <div class="anat">
+        <div class="pic">
+          <svg id="anatSvg" viewBox="0 0 640 300" role="img" aria-label="Normal capnogram with four phases labeled"></svg>
+        </div>
+        <div class="info" id="phInfo" aria-live="polite"></div>
+      </div>
+
+      <div class="block">
+        <div class="kicker">The gap</div>
+        <h3>EtCO₂ estimates PaCO₂. It doesn't replace it.</h3>
+        <p>Exhaled gas from working alveoli mixes with gas from dead space (airways and alveoli that get air but no blood). That dilutes the CO₂, so <b>PaCO₂ is normally a few mmHg higher than EtCO₂.</b> Get an ABG to see how they line up for this patient, then trend the EtCO₂.</p>
+        <div class="gap">
+          <div><h4>Normal gap</h4><div class="num">2–5 mmHg</div><p class="sub" style="font-size:14px">PaCO₂ slightly above EtCO₂.</p></div>
+          <div><h4>Gap widens when</h4><p style="font-size:14.5px;margin:6px 0 0">Dead space goes up: <b>low cardiac output, PE, hypovolemia, high PEEP, COPD, ARDS</b>, or a leak in the sampling system or around the tube.</p></div>
+          <div><h4>So what</h4><p style="font-size:14.5px;margin:6px 0 0">A "normal" EtCO₂ can hide a high PaCO₂. If the patient doesn't match the number, <b>trust the patient and check an ABG.</b></p></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="kicker">How it measures</div>
+        <h3>What the sensor sees, and when to trust it</h3>
+        <div class="cards two">
+          <div class="card"><h4>The whole breath</h4><p>Capnography measures CO₂ through <b>every part of the breath</b>, inspiration included. The EtCO₂ number is the peak at the end of exhalation, and the monitor counts each waveform to give the airway respiratory rate (awRR). It updates breath by breath, in real time.</p></div>
+          <div class="card"><h4>Infrared absorption</h4><p>CO₂ <b>absorbs</b> infrared light. The sensor shines infrared through the gas and measures how much light gets through: the less that passes, the more CO₂ in that breath.</p></div>
+          <div class="card"><h4>Mainstream</h4><p>The sensor sits right on the airway adapter. Fastest reading, no sample line to clog. The tradeoff: it's built for intubated or bagged airways, and its weight at the tube can tug on the ETT. RT places it on anyone being bagged.</p></div>
+          <div class="card"><h4>Sidestream / Microstream</h4><p>A thin line pulls a gas sample back to the monitor. Light at the airway and works on non-intubated patients through a sampling nasal cannula. The tradeoffs: a short delay, and water or secretions can block the line.</p></div>
+        </div>
+        <div class="callout amber">
+          <div class="ml">Trust the wave before the number</div>
+          <p>An EtCO₂ value is only valid when the waveform behind it looks right: a clean upstroke and a real plateau. No good wave, no good number; fix the cause before you chart it. Keep the adapter's sampling port and sensor <b>pointing up</b> so condensation and secretions drain away from it, and <b>never flush the sampling line</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 SPOT IT ================= -->
+<section class="sec" id="spot">
+  <div class="wrap sgrid">
+    <aside class="rail"><div class="in"><div class="eyebrow">Pattern recognition</div><div><div class="idx">03</div><i class="tick"></i></div></div></aside>
+    <div class="content">
+      <div class="cbar"></div>
+      <header class="chead"><h2>Spot it</h2><span class="pill">CORE</span><p class="thesis">Nine patterns cover almost everything you'll see. Click through them, then hide the labels and test yourself.</p></header>
+      <div class="modes">
+        <div class="grp" id="patBtns"><span>Pattern</span></div>
+      </div>
+      <div class="modes">
+        <div class="grp"><span>Practice</span>
+          <button class="mbtn" id="hideBtn" aria-pressed="false">Hide labels</button>
+          <button class="mbtn prob" id="quizBtn" aria-pressed="false">Quiz me</button>
+        </div>
+      </div>
+      <div class="viewer" id="viewer">
+        <div class="monitor" aria-label="Capnography pattern monitor">
+          <div class="mon-top"><span class="lbl-hide" id="patTag">CO₂</span><span class="alarm" id="patAlarm">ALARM</span></div>
+          <div class="mon-body">
+            <canvas id="patCanvas" aria-hidden="true"></canvas>
+            <div class="readouts">
+              <div class="ro co2"><div class="lbl">EtCO₂</div><div class="val"><span id="patEt">--</span><span class="unit">mmHg</span></div></div>
+              <div class="ro rr"><div class="lbl">awRR</div><div class="val"><span id="patRR">--</span><span class="unit">/min</span></div></div>
+              <div class="ro" style="color:var(--spo2)"><div class="lbl">SpO₂</div><div class="val"><span id="patSp">--</span><span class="unit">%</span></div></div>
+            </div>
+          </div>
+          <div class="mon-foot"><button class="mini" id="patRestart">Restart strip</button><small>12-second sweep</small></div>
+        </div>
+        <div class="info" id="patInfo" aria-live="polite"></div>
+      </div>
+      <div class="quiz" id="quiz" aria-live="polite">
+        <h3>What's on the monitor?</h3>
+        <div class="opts" id="quizOpts"></div>
+        <div class="score" id="quizScore"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 04 TROUBLE ================= -->
+<section class="sec" id="trouble">
+  <div class="wrap sgrid">
+    <aside class="rail"><div class="in"><div class="eyebrow">At the bedside</div><div><div class="idx">04</div><i class="tick"></i></div></div></aside>
+    <div class="content">
+      <div class="cbar"></div>
+      <header class="chead"><h2>See · Think · Do</h2><span class="pill">CORE</span><p class="thesis">Look at the patient before the monitor. SpO₂ can stay normal for minutes after a tube comes out; EtCO₂ drops in one breath.</p></header>
+      <div class="callout navy" style="margin-top:0">
+        <div class="ml">Every intubation, every tube move</div>
+        <p><b>Continuous waveform capnography is how tube placement is confirmed and watched.</b> After intubation, a reintubation, or a tube move, look for a sustained waveform breath after breath. A wave that fades away over a few breaths, or never appears, means the tube is not in the trachea until proven otherwise. After every turn or transport, check that the wave is still there.</p>
+      </div>
+      <div class="filters" id="tFilters">
+        <button class="mbtn" data-f="all" aria-pressed="true">All</button>
+        <button class="mbtn prob" data-f="now" aria-pressed="false">Act now</button>
+        <button class="mbtn" data-f="fixit" aria-pressed="false">Fix &amp; watch</button>
+      </div>
+      <div class="trouble" id="tCards">
+
+        <article class="tcard now" data-sev="now">
+          <header><h3>Waveform suddenly gone</h3><span class="chip now">Act now</span></header>
+          <p class="see"><b>See:</b> flat line at zero, EtCO₂ reads 0 or blank, apnea alarm. SpO₂ may still look fine.</p>
+          <p class="see"><b>Think:</b> tube dislodged or in the esophagus, circuit disconnected, tube completely blocked, apnea, cardiac arrest. Sampling failure comes <i>last</i>.</p>
+          <ol>
+            <li><b>Look at the patient:</b> chest rise, breath sounds, color, pulse.</li>
+            <li>Check the circuit from the patient back: connections, then the tube depth (cm at the teeth or lip) against the documented depth.</li>
+            <li>Can't confirm the tube? Disconnect from the vent, bag with 100% O₂, watch for a waveform on the bag.</li>
+            <li>Still no waveform: call RT and the provider <b>STAT</b>; call a code if pulseless.</li>
+          </ol>
+          <div class="pacu"><b>Think DOPE</b>Displacement · Obstruction · Pneumothorax · Equipment</div>
+        </article>
+
+        <article class="tcard now" data-sev="now">
+          <header><h3>EtCO₂ falling fast, waveform still there</h3><span class="chip now">Act now</span></header>
+          <p class="see"><b>See:</b> the shape is normal, but each breath is shorter than the one before, over a few minutes.</p>
+          <p class="see"><b>Think:</b> the perfusion lever. Cardiac arrest, massive PE, sudden hemorrhage, profound hypotension.</p>
+          <ol>
+            <li>Check pulse, BP, and rhythm <b>now</b>.</li>
+            <li>Pulseless: start CPR and call a code.</li>
+            <li>Pulse present: assess for bleeding (chest tube output, drains, sites) and notify the provider.</li>
+          </ol>
+          <div class="pacu"><b>Why it works</b>CO₂ is still being made, but the blood isn't bringing it to the lungs.</div>
+        </article>
+
+        <article class="tcard now" data-sev="now">
+          <header><h3>Shark fin</h3><span class="chip now">Act now</span></header>
+          <p class="see"><b>See:</b> slow, sloped upstroke that never flattens into a plateau. Often comes with high peak pressures.</p>
+          <p class="see"><b>Think:</b> obstruction to exhalation. Bronchospasm, secretions, kinked or bitten tube, auto-PEEP, COPD.</p>
+          <ol>
+            <li>Check the tube for kinks or biting; place a bite block if needed.</li>
+            <li>Listen: wheezes or coarse sounds? Suction if indicated.</li>
+            <li>Check peak pressures and alarms on the vent.</li>
+            <li>Call RT for bronchodilator / vent assessment; notify the provider if it's not resolving.</li>
+          </ol>
+          <div class="pacu"><b>Shape first, number second</b>Partial obstruction changes the shape before it changes the number. EtCO₂ may read normal or even rise, so don't let a normal number talk you out of a fin.</div>
+        </article>
+
+        <article class="tcard fixit" data-sev="fixit">
+          <header><h3>Gradual rise</h3><span class="chip fix">Fix &amp; watch</span></header>
+          <p class="see"><b>See:</b> normal shape, plateau creeping up over minutes to hours.</p>
+          <p class="see"><b>Think:</b> ventilation down (vent rate lowered, oversedation on a spontaneous mode) or metabolism up (fever, shivering, sepsis, bicarb given). Rapid, unexplained rise with rigidity and fever: malignant hyperthermia.</p>
+          <ol>
+            <li>Check vent mode, set vs. actual rate, tidal volume.</li>
+            <li>Check temperature; treat shivering and fever per orders.</li>
+            <li>Get an ABG to compare against PaCO₂.</li>
+            <li>Notify the provider per the order's parameters. <span class="chip pol">CP 3-170</span></li>
+          </ol>
+          <div class="pacu"><b>Ask</b>Which lever moved: metabolism or ventilation?</div>
+        </article>
+
+        <article class="tcard fixit" data-sev="fixit">
+          <header><h3>Gradual fall</h3><span class="chip fix">Fix &amp; watch</span></header>
+          <p class="see"><b>See:</b> normal shape, plateau drifting down.</p>
+          <p class="see"><b>Think:</b> hyperventilation (pain, anxiety, vent rate up), falling cardiac output, hypothermia, or a leak.</p>
+          <ol>
+            <li><b>Check perfusion first:</b> BP, HR, cap refill, urine output. Low output is the dangerous cause.</li>
+            <li>Then pain, anxiety, sedation, vent settings.</li>
+            <li>Check the cuff and circuit for a leak.</li>
+          </ol>
+          <div class="pacu"><b>Trap</b>A low EtCO₂ is not proof of a low PaCO₂. If perfusion dropped, the gap widened.</div>
+        </article>
+
+        <article class="tcard fixit" data-sev="fixit">
+          <header><h3>Baseline doesn't return to zero</h3><span class="chip fix">Fix &amp; watch</span></header>
+          <p class="see"><b>See:</b> the inspiratory part of the wave sits above zero and may keep climbing.</p>
+          <p class="see"><b>Think:</b> rebreathing CO₂. Faulty exhalation valve, too little expiratory time, water or contamination in the sampling line or sensor.</p>
+          <ol>
+            <li>Call RT to check the circuit and exhalation valve.</li>
+            <li>Check the sampling line and filter for water. <b>Never flush the sampling line.</b></li>
+            <li>Rezero or replace the sensor per the manufacturer.</li>
+          </ol>
+          <div class="pacu"><b>Sidestream tip</b>Water traps and filters exist for a reason; change them, don't flush them.</div>
+        </article>
+
+        <article class="tcard fixit" data-sev="fixit">
+          <header><h3>Curare cleft</h3><span class="chip fix">Fix &amp; watch</span></header>
+          <p class="see"><b>See:</b> a notch dipping into the plateau.</p>
+          <p class="see"><b>Think:</b> the patient is breathing on their own against the vent. Paralytic or sedation wearing off, dyssynchrony.</p>
+          <ol>
+            <li>Assess comfort, sedation level, and synchrony with the vent.</li>
+            <li>On a neuromuscular blocker? Check train-of-four per order and notify the provider.</li>
+            <li>Call RT for vent synchrony.</li>
+          </ol>
+          <div class="pacu"><b>Good news sometimes</b>During a sedation wean, a cleft can just mean the patient is waking up.</div>
+        </article>
+
+        <article class="tcard fixit" data-sev="fixit">
+          <header><h3>Low, ragged plateau</h3><span class="chip fix">Fix &amp; watch</span></header>
+          <p class="see"><b>See:</b> the plateau sags or drops off early, values bounce breath to breath.</p>
+          <p class="see"><b>Think:</b> a leak. Cuff leak (often audible at the mouth), loose or cracked sampling line, water in the line.</p>
+          <ol>
+            <li>Listen at the mouth for a cuff leak; call RT to check cuff pressure.</li>
+            <li>Check every connection from the adapter to the monitor.</li>
+          </ol>
+          <div class="pacu"><b>Don't</b>chart a leak value as the patient's EtCO₂.</div>
+        </article>
+
+      </div>
+      <div class="block">
+        <div class="kicker">Beyond the vent</div>
+        <h3>Capnography isn't just for intubated patients</h3>
+        <p class="sub">CP 3-170 covers intubated patients. You'll still meet capnography outside the vent, so know where else it earns its place.</p>
+        <div class="cards">
+          <div class="card"><h4>Non-intubated patients</h4><p>Sampling nasal cannulas give valid readings and waveforms in spontaneously breathing patients, in the ICU, the procedural areas and on the floors.</p></div>
+          <div class="card"><h4>Opioids &amp; sedation</h4><p>Recommended for patients on high-dose opioids, PCA, or procedural sedation. It catches respiratory depression <b>well before SpO₂ falls</b>, especially when the patient is on supplemental oxygen.</p></div>
+          <div class="card"><h4>Feeding &amp; NG tubes</h4><p>A CO₂ waveform through a newly placed gastric tube means it's in the airway. Capnography can help guide placement; follow the placement policy for final confirmation.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 05 CPR ================= -->
+<section class="sec" id="cpr">
+  <div class="wrap sgrid">
+    <aside class="rail"><div class="in"><div class="eyebrow">Resuscitation</div><div><div class="idx">05</div><i class="tick"></i></div></div></aside>
+    <div class="content">
+      <div class="cbar"></div>
+      <header class="chead"><h2>CPR &amp; ROSC</h2><span class="pill stretch">DEEPER</span><p class="thesis">In a code, EtCO₂ is a cardiac output monitor. Better compressions push more CO₂-rich blood through the lungs.</p></header>
+      <div class="block cards">
+        <div class="card"><h4>Coach compressions</h4><div class="big">≥ 10</div><p>mmHg at minimum, <b>ideally ≥ 20</b>. Below 10: push harder, faster, fully recoil, or swap compressors.</p></div>
+        <div class="card"><h4>Catch ROSC</h4><div class="big">Abrupt ↑</div><p>A sudden, <b>sustained</b> jump (often 10+ mmHg) can mean ROSC. Confirm at the next rhythm/pulse check; don't stop CPR early to look.</p></div>
+        <div class="card"><h4>Never alone</h4><div class="big">1 of many</div><p>Per AHA 2025, EtCO₂ should not be used by itself to decide to stop resuscitation.</p></div>
+      </div>
+      <div class="callout amber">
+        <div class="ml">Read the bumps carefully</div>
+        <p><b>Sodium bicarbonate</b> releases CO₂ and causes a short spike that isn't ROSC. <b>Epinephrine</b> can dip EtCO₂ briefly. Hyperventilating with the bag also lowers it. Read the number together with what was just done.</p>
+      </div>
+      <div class="block">
+        <div class="kicker">Try it</div>
+        <h3>Run the code</h3>
+        <p class="sub">Time is compressed: <b>10 seconds = 1 minute</b>. Compressors fatigue after about 2 minutes. Keep EtCO₂ above the lines.</p>
+        <div class="cpr">
+          <div class="monitor">
+            <div class="mon-top"><span>CODE · <span id="cprClock">00:00</span></span><span class="alarm" id="cprAlarm">LOW EtCO₂</span></div>
+            <div class="stack">
+              <div class="monlbl">EtCO₂ trend · 10 min</div>
+              <canvas class="trend" id="cprTrend" aria-hidden="true"></canvas>
+              <div class="monlbl" style="display:flex;justify-content:space-between"><span>Live capnogram · 10 breaths/min via ETT</span><span style="color:var(--co2)">EtCO₂ <b id="cprEt" style="font-size:16px">--</b></span></div>
+              <canvas class="live" id="cprLive" aria-hidden="true"></canvas>
+            </div>
+          </div>
+          <div class="ctl">
+            <div class="lv">Compressions</div>
+            <div class="row"><label for="cprQ">Quality <output id="cprQo">Good</output></label><input type="range" id="cprQ" min="0" max="3" step="1" value="2"><small class="sub" style="font-size:12px">none · poor · good · excellent</small></div>
+            <div class="presets">
+              <button class="mbtn" id="cprSwap">Swap compressor</button>
+              <button class="mbtn" id="cprEpi">Give epinephrine</button>
+              <button class="mbtn" id="cprBicarb">Give bicarb</button>
+            </div>
+            <div class="lv">Patient</div>
+            <div class="presets">
+              <button class="mbtn prob" id="cprRosc">ROSC</button>
+              <button class="mbtn" id="cprRearrest">Re-arrest</button>
+              <button class="mbtn" id="cprReset">Reset code</button>
+            </div>
+            <div class="cprlog" id="cprLog" aria-live="polite">Code started. Compressions on, airway in, EtCO₂ on the bag. Watch the trend.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 06 CASES ================= -->
+<section class="sec" id="cases">
+  <div class="wrap sgrid">
+    <aside class="rail"><div class="in"><div class="eyebrow">Practice</div><div><div class="idx">06</div><i class="tick"></i></div></div></aside>
+    <div class="content">
+      <div class="cbar"></div>
+      <header class="chead"><h2>Cases</h2><span class="pill stretch">DEEPER</span><p class="thesis">Three floats, three monitors. Pick your next move.</p></header>
+      <div id="caseHost"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 07 POLICY ================= -->
+<section class="sec" id="policy">
+  <div class="wrap sgrid">
+    <aside class="rail"><div class="in"><div class="eyebrow">Keck policy</div><div><div class="idx">07</div><i class="tick"></i></div></div></aside>
+    <div class="content">
+      <div class="cbar"></div>
+      <header class="chead"><h2>Keck policy crosswalk</h2><span class="pill">CORE</span><p class="thesis">This page teaches the concepts. Keck's numbers live in the policy: open it (Keck sign-in) before you set alarms or chart.</p></header>
+      <p><a class="polink" data-pol="CP3-170" href="#">CP 3-170 · End-Tidal CO₂ (Capnography) Monitoring of Intubated Patients ↗</a></p>
+      <div class="polgrid">
+        <div><h3>Ordering</h3><p>Capnography starts with a provider order, and the order must say when to notify the provider.</p></div>
+        <div><h3>Normal range &amp; alarm limits</h3><p>Keck's normal EtCO₂ range and baseline alarm limits are set in the policy. Use those, not the textbook 35–45.</p></div>
+        <div><h3>Documentation</h3><p>The policy sets how often EtCO₂ is charted, plus PRN with significant changes or per order.</p></div>
+        <div><h3>ABG correlation</h3><p>Get an ABG after capnography is placed to document how EtCO₂ and PaCO₂ line up.</p></div>
+        <div><h3>Sampling line care</h3><p>Never flush the sampling line; it damages the filter and lets moisture into the monitor.</p></div>
+        <div><h3>Manual ventilation &amp; codes</h3><p>RT places mainstream EtCO₂ on patients being bagged, including before intubation. See also <a class="polink" data-pol="CP3-123" href="#">CP 3-123 Code Blue Response ↗</a></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <div class="sig">Reading the Wave</div>
+        <p style="margin-top:12px">Waveform capnography reference for ICU nurses · Keck Medicine of USC<br>Nursing Professional Development &amp; Education, Critical Care</p>
+        <p>Scott Brickner, MSN, RN, CCRN<br>NPD Practitioner, Critical Care</p>
+      </div>
+      <div>
+        <h4>Keck policies reviewed</h4>
+        <ol>
+          <li>CP 3-170 End-Tidal CO₂ (Capnography) Monitoring (rev. 09/09/2025)</li>
+          <li>CP 3-123 Code Blue Response</li>
+        </ol>
+      </div>
+      <div>
+        <h4>Evidence</h4>
+        <ol>
+          <li>American Heart Association. Part 9: Adult advanced life support. 2025 AHA Guidelines for CPR and ECC. <i>Circulation.</i> 2025;152(16 Suppl 2):S538–S577.</li>
+          <li>Walsh BK, Crotwell DN, Restrepo RD. AARC Clinical Practice Guideline: Capnography/capnometry during mechanical ventilation, 2011 revision. <i>Respir Care.</i> 2011;56(4):503–509.</li>
+          <li>Siobal MS. Monitoring exhaled carbon dioxide. <i>Respir Care.</i> 2016;61(10):1397–1416.</li>
+          <li>Kodali BS. Capnography outside the operating rooms. <i>Anesthesiology.</i> 2013;118(1):192–201.</li>
+          <li>Johnson KL, ed. <i>AACN Procedure Manual for High Acuity, Progressive, and Critical Care.</i> 8th ed. Elsevier; 2024.</li>
+          <li>Farkas J. Waveform capnography in the intubated patient. <i>Internet Book of Critical Care.</i> emcrit.org/ibcc/co2</li>
+        </ol>
+      </div>
+    </div>
+    <div class="fine"><span style="letter-spacing:.1em;text-transform:uppercase;font-weight:700">Keck Medicine of USC · Waveform Capnography</span><span>Educational resource. Simulations are simplified teaching models. Follow Keck policy and provider orders; policy governs where this page differs.</span><span>v1.1 · November 2026</span></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* ---------- author config: Keck policy links (SharePoint, Keck sign-in) ---------- */
+const POLICY_LINKS={
+  "CP3-170":"", /* TODO: paste SharePoint URL for CP 3-170 */
+  "CP3-123":""  /* TODO: paste SharePoint URL for CP 3-123 */
+};
+document.querySelectorAll('a.polink').forEach(a=>{
+  const u=POLICY_LINKS[a.dataset.pol];
+  if(u){a.href=u;a.target="_blank";a.rel="noopener";}
+  else if(a.getAttribute('href')==='#'){a.href='#policy';}
+});
+
+const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- nav drawer + active section ---------- */
+const drawer=document.getElementById('drawer'),burger=document.querySelector('.burger');
+function setDrawer(o){drawer.classList.toggle('open',o);drawer.setAttribute('aria-hidden',String(!o));burger.setAttribute('aria-expanded',String(o));if(o)drawer.querySelector('.close').focus();}
+burger.addEventListener('click',()=>setDrawer(true));
+drawer.querySelector('.close').addEventListener('click',()=>setDrawer(false));
+drawer.querySelector('.scrim').addEventListener('click',()=>setDrawer(false));
+drawer.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>setDrawer(false)));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')setDrawer(false);});
+const navLinks=[...document.querySelectorAll('.topnav a')];
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+en.target.id));}});},{rootMargin:'-40% 0px -55% 0px'});
+  document.querySelectorAll('section.sec').forEach(s=>io.observe(s));
+}
+
+/* =====================================================================
+   Capnogram shape engine
+   p = {et, base, k (upstroke time const, frac of expiration), slope (plateau rise),
+        cleft (0..1 depth), sag (0..1 late-plateau fall), ragged (0..1), rr}
+   ===================================================================== */
+function hash(n){const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x);}
+function breathValue(x,p,bi){
+  /* x: 0..1 position within one breath cycle. Expiration starts at 0.34 (I:E ~1:2). */
+  const ti=0.34, base=p.base||0;
+  const jit=p.ragged?(hash(bi)-0.5)*2*p.ragged:0;
+  const et=Math.max(0,p.et*(1+jit*0.35));
+  if(x<ti){
+    /* inspiration: fast downstroke from previous end-tidal to baseline */
+    const prev=p.prevEnd!=null?p.prevEnd:(p.prevEt!=null?p.prevEt:et);
+    const d=0.045;
+    if(x<d){const u=x/d;return base+(prev-base)*(1-u)*(1-u*0.15);}
+    return base;
+  }
+  const u=(x-ti)/(1-ti);
+  const k=p.k||0.035;
+  let r=1-Math.exp(-u/k);
+  const slope=p.slope==null?0.08:p.slope;
+  let v=r*(1-slope+slope*u);           /* plateau gently rising to end-tidal */
+  if(p.cleft){const c=Math.exp(-Math.pow((u-0.58)/0.045,2));v-=p.cleft*c*0.55;}
+  if(p.sag){v-=p.sag*Math.max(0,u-0.45)*1.1;}
+  return base+(et-base)*Math.max(0,v);
+}
+
+/* sweeping monitor */
+function Sweeper(canvas,opts){
+  this.c=canvas;this.ctx=canvas.getContext('2d');this.opts=Object.assign({window:12,max:60,color:'#F5D90A',grid:true,lines:null},opts||{});
+  this.x=0;this.t=0;this.last=null;this.buf=null;this.w=0;this.h=0;this.running=true;this.resize();
+  const self=this;
+  if('ResizeObserver' in window){new ResizeObserver(()=>self.resize()).observe(canvas);}else{window.addEventListener('resize',()=>self.resize());}
+}
+Sweeper.prototype.resize=function(){
+  const r=this.c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  const w=Math.max(200,Math.round(r.width)),h=Math.max(80,Math.round(r.height));
+  if(w===this.w&&h===this.h)return;
+  this.w=w;this.h=h;this.c.width=w*dpr;this.c.height=h*dpr;this.ctx.setTransform(dpr,0,0,dpr,0,0);
+  this.buf=new Float32Array(w).fill(NaN);this.x=0;
+};
+Sweeper.prototype.reset=function(){if(this.buf)this.buf.fill(NaN);this.x=0;};
+Sweeper.prototype.yOf=function(v){const pad=14;return this.h-pad-(v/this.opts.max)*(this.h-pad*2);};
+Sweeper.prototype.step=function(dt,sample){
+  /* sample(t) -> mmHg ; advances sweep by dt seconds */
+  const pxPerSec=this.w/this.opts.window;let n=dt*pxPerSec;
+  while(n>0){
+    const s=Math.min(1,n);this.t+=s/pxPerSec;
+    this.buf[Math.floor(this.x)]=sample(this.t);
+    this.x+=s;if(this.x>=this.w)this.x=0;n-=s;
+  }
+};
+Sweeper.prototype.draw=function(){
+  const g=this.ctx,w=this.w,h=this.h,o=this.opts;
+  g.clearRect(0,0,w,h);
+  if(o.grid){
+    g.strokeStyle='#1A2027';g.lineWidth=1;g.font='600 10px "Source Sans 3",sans-serif';g.fillStyle='#4A5561';
+    const step=(o.max>60||h<150)?20:10;
+    for(let v=0;v<=o.max;v+=step){const y=Math.round(this.yOf(v))+.5;g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke();g.fillText(String(v),2,y-2);}
+  }
+  if(o.lines){o.lines.forEach(L=>{const y=Math.round(this.yOf(L.v))+.5;g.setLineDash([5,5]);g.strokeStyle=L.c;g.beginPath();g.moveTo(0,y);g.lineTo(w,y);g.stroke();g.setLineDash([]);g.fillStyle=L.c;g.fillText(L.label,w-g.measureText(L.label).width-4,y-3);});}
+  g.strokeStyle=o.color;g.lineWidth=2.2;g.lineJoin='round';g.beginPath();
+  let pen=false;const gapPx=Math.max(10,w*0.03);
+  for(let i=0;i<w;i++){
+    const ahead=(i-this.x+w)%w;
+    if(ahead>=0&&ahead<gapPx){pen=false;continue;}
+    const v=this.buf[i];if(isNaN(v)){pen=false;continue;}
+    const y=this.yOf(v);if(!pen){g.moveTo(i,y);pen=true;}else g.lineTo(i,y);
+  }
+  g.stroke();
+};
+
+/* breath clock: produces value + per-breath end-tidal readout */
+function BreathClock(){this.phase=0;this.bi=0;this.lastV=null;this.peak=0;this.onBreath=null;}
+BreathClock.prototype.sample=function(dt,p){
+  const rr=Math.max(0.5,p.rr);const T=60/rr;
+  const prevPhase=this.phase;this.phase+=dt/T;
+  if(this.phase>=1){this.phase-=1;this.bi++;if(this.onBreath)this.onBreath(this.peak,rr);this.endV=this.lastV;this.peak=0;}
+  p.prevEnd=this.endV;
+  const v=p.apnea?0:breathValue(this.phase,p,this.bi);
+  if(this.phase>0.34)this.peak=Math.max(this.peak,v);
+  this.lastV=v;
+  return v;
+};
+
+/* animation loop registry: only animate visible monitors */
+const loops=[];
+function addLoop(el,fn){const L={el,fn,vis:true};loops.push(L);
+  if('IntersectionObserver' in window){new IntersectionObserver(es=>es.forEach(e=>L.vis=e.isIntersecting),{rootMargin:'100px'}).observe(el);}
+}
+let lastT=null;
+function frame(ts){
+  const dt=lastT==null?0:Math.min(0.1,(ts-lastT)/1000);lastT=ts;
+  loops.forEach(L=>{if(L.vis)L.fn(reduce?dt:dt);});
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* =====================================================================
+   01  Three-lever simulator
+   ===================================================================== */
+const S={met:100,co:100,rr:12,vt:500};
+const PRESETS=[
+  {n:'Baseline',s:{met:100,co:100,rr:12,vt:500},q:'A stable vented patient. Note the PaCO₂ sits a few mmHg above the EtCO₂. That gap is normal.'},
+  {n:'Fever + shivering',s:{met:150,co:110,rr:12,vt:500},q:'Same vent settings, more CO₂ made. Which lever moved? Metabolism. Treat the fever and shivering before you chase the vent.'},
+  {n:'Cold & sedated',s:{met:70,co:90,rr:12,vt:500},q:'Post-op, hypothermic, deeply sedated. Less CO₂ made, so EtCO₂ drifts low with the same vent settings.'},
+  {n:'Bleeding · low output',s:{met:100,co:40,rr:12,vt:500},q:'Vent unchanged, EtCO₂ falling. Reveal the ABG: PaCO₂ barely moved, but the gap blew open. Low EtCO₂ here means poor perfusion. Check BP and chest tube output.'},
+  {n:'Massive PE',s:{met:100,co:30,rr:16,vt:500},q:'Sudden drop in EtCO₂ with a normal-looking wave. Blood isn’t reaching ventilated alveoli: dead space. Check the patient, not the sampling line.'},
+  {n:'Overbreathing the vent',s:{met:110,co:105,rr:30,vt:520},q:'Pain or anxiety, rate 30. Ventilation lever up, EtCO₂ down. Treat the cause; don’t just silence the alarm.'},
+  {n:'Shallow breaths',s:{met:100,co:100,rr:22,vt:260},q:'Oversedated on pressure support: fast, shallow breaths. EtCO₂ looks almost normal. Reveal the ABG. Small breaths are mostly dead space, so EtCO₂ underestimates a dangerous PaCO₂.'},
+  {n:'Arrest, no CPR',s:{met:100,co:0,rr:10,vt:500},q:'No circulation: no CO₂ delivered to the lungs. The bag is moving air, but EtCO₂ is near zero. Start compressions and watch section 05.'}
+];
+function physio(s){
+  const vd=150;const va=Math.max(0.25,s.rr*Math.max(10,s.vt-vd)/1000);
+  const vco2=200*s.met/100;
+  let pa=0.863*vco2/va; pa=Math.min(130,Math.max(12,pa));
+  const cof=Math.max(0,s.co)/100;
+  const deliver=cof>=1?1:Math.pow(cof,0.8);
+  let et=Math.max(0,pa*deliver-3);
+  const vtFactor=Math.min(1,Math.max(0.15,(s.vt-120)/260));
+  et*=vtFactor;
+  if(s.co<=0)et=Math.min(et,2);
+  return {pa:pa,et:Math.max(0,et),k:s.vt<320?0.06+(320-s.vt)/900:0.035,slope:s.vt<320?0.22:0.08};
+}
+const simC=document.getElementById('simCanvas');
+const simSw=new Sweeper(simC,{max:60});
+const simClock=new BreathClock();
+let simP={et:38,rr:12,base:0,k:.035,slope:.08};
+let showAbg=false;
+const $=id=>document.getElementById(id);
+function applySim(){
+  const r=physio(S);simP=Object.assign(simP,{et:r.et,rr:S.rr,k:r.k,slope:r.slope});
+  simSw.opts.max=Math.max(r.et,40)>55?(Math.max(r.et,40)>75?100:80):60;$('simScale').textContent=simSw.opts.max;
+  $('oMet').textContent=S.met+'%';$('oCO').textContent=S.co+'%';$('oRR').textContent=S.rr;$('oVT').textContent=S.vt+' mL';
+  $('abgPa').textContent=Math.round(r.pa);$('abgEt').textContent=Math.round(r.et);$('abgGap').textContent=Math.round(r.pa-r.et);
+}
+simClock.onBreath=(pk,rr)=>{
+  $('simEt').textContent=Math.round(pk);$('simRR').textContent=Math.round(rr);
+  const al=$('simAlarm');const hi=pk>50,lo=pk<30;al.classList.toggle('on',hi||lo);al.textContent=hi?'EtCO₂ HIGH':'EtCO₂ LOW';
+};
+['Met','CO','RR','VT'].forEach(k=>{const el=$('s'+k);el.addEventListener('input',()=>{S[k.toLowerCase()]=+el.value;applySim();document.querySelectorAll('#presets .mbtn').forEach(b=>b.setAttribute('aria-pressed','false'));});});
+const pHost=$('presets');
+PRESETS.forEach((pr,i)=>{const b=document.createElement('button');b.className='mbtn';b.textContent=pr.n;b.setAttribute('aria-pressed',i===0?'true':'false');
+  b.addEventListener('click',()=>{Object.assign(S,pr.s);['Met','CO','RR','VT'].forEach(k=>$('s'+k).value=S[k.toLowerCase()]);applySim();
+    pHost.querySelectorAll('.mbtn').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+    $('qbox').innerHTML='<b>'+pr.n+'</b>'+pr.q;});
+  pHost.appendChild(b);});
+$('qbox').innerHTML='<b>Baseline</b>'+PRESETS[0].q;
+$('abgBtn').addEventListener('click',e=>{showAbg=!showAbg;$('abg').classList.toggle('hidden',!showAbg);e.currentTarget.setAttribute('aria-pressed',String(showAbg));e.currentTarget.textContent=showAbg?'Hide ABG':'Reveal ABG';});
+applySim();
+simSw.step(11,()=>simClock.sample(1/(simSw.w/simSw.opts.window),simP));
+addLoop(simC,dt=>{simSw.step(dt,()=>simClock.sample(1/(simSw.w/simSw.opts.window),simP));simSw.draw();});
+
+/* =====================================================================
+   02  Anatomy
+   ===================================================================== */
+const PH=[
+  {id:'I',n:'Phase I · Baseline',x0:40,x1:150,t:'Inspiration and the start of exhalation. Fresh gas and anatomic dead space with no CO₂, so the line sits at <b>zero</b>.',w:'<b>Broken when:</b> it doesn’t return to zero, meaning rebreathing (exhalation valve, wet sensor, short expiratory time).'},
+  {id:'II',n:'Phase II · Upstroke',x0:150,x1:196,t:'Alveolar gas reaches the sensor and CO₂ climbs <b>steeply</b>.',w:'<b>Broken when:</b> it slopes and slurs into a shark fin, meaning obstruction to exhalation (bronchospasm, secretions, kinked tube).'},
+  {id:'III',n:'Phase III · Plateau',x0:196,x1:372,t:'Mostly alveolar gas. Nearly flat, rising slightly. The <b>end of the plateau is the end-tidal value</b>, the number on the screen.',w:'<b>Broken when:</b> a notch dips into it (curare cleft: patient breathing against the vent), it sags (leak), or it never forms (shallow breaths).'},
+  {id:'IV',n:'Phase IV · Downstroke',x0:372,x1:410,t:'Next inspiration. Fresh gas washes the sensor and CO₂ drops <b>sharply</b> to zero.',w:'<b>Broken when:</b> it’s slow or doesn’t reach zero (rebreathing, inspiratory valve problem).'}
+];
+(function(){
+  const svg=$('anatSvg');const ns='http://www.w3.org/2000/svg';
+  const W=640,H=300,y0=250,y1=60;
+  const yv=v=>y0-(v/45)*(y0-y1);
+  /* explicit textbook breath: I 40-150, II 150-196, III 196-372, IV 372-410, then next breath */
+  const pts=[];
+  function breathAt(x){
+    const cyc=370;const xx=((x-40)%cyc+cyc)%cyc+40;
+    if(xx<150)return 0;
+    if(xx<196){const u=(xx-150)/46;return 37*(1-Math.exp(-u*3.2))/(1-Math.exp(-3.2));}
+    if(xx<372){const u=(xx-196)/176;return 37+3*u;}
+    if(xx<410){const u=(xx-372)/38;return 40*Math.pow(1-u,1.6);}
+    return 0;
+  }
+  for(let x=40;x<=620;x+=1)pts.push([x,yv(breathAt(x))]);
+  let d='';pts.forEach((q,i)=>d+=(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1));
+  const mk=(t,a)=>{const e=document.createElementNS(ns,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+  for(let v=0;v<=40;v+=10){svg.appendChild(mk('line',{x1:30,x2:620,y1:yv(v),y2:yv(v),stroke:'#1A2027'}));const tx=mk('text',{x:4,y:yv(v)+4,fill:'#4A5561','font-size':11,'font-family':'Source Sans 3,sans-serif'});tx.textContent=v;svg.appendChild(tx);}
+  const groups=[];
+  PH.forEach((ph,i)=>{const g=mk('g',{class:'ph',tabindex:0,role:'button','aria-label':ph.n});
+    g.appendChild(mk('rect',{x:ph.x0,y:30,width:ph.x1-ph.x0,height:235}));
+    const tx=mk('text',{x:(ph.x0+ph.x1)/2,y:285,'text-anchor':'middle'});tx.textContent=ph.id;g.appendChild(tx);
+    g.addEventListener('click',()=>sel(i));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();sel(i);}});
+    svg.appendChild(g);groups.push(g);});
+  svg.appendChild(mk('path',{d:d,fill:'none',stroke:'#F5D90A','stroke-width':3,'stroke-linejoin':'round'}));
+  /* end-tidal marker */
+  const etx=370,ety=yv(40);
+  svg.appendChild(mk('circle',{cx:etx,cy:ety,r:6,fill:'none',stroke:'#FFCC00','stroke-width':2}));
+  const lab=mk('text',{x:etx-8,y:ety-14,'text-anchor':'end',fill:'#FFCC00','font-size':13,'font-weight':700,'font-family':'Source Sans 3,sans-serif'});lab.textContent='End-tidal = the number';svg.appendChild(lab);
+  const bh=$('phbtns');const btns=[];
+  PH.forEach((ph,i)=>{const b=document.createElement('button');b.className='mbtn';b.textContent=ph.n.split(' · ')[0];b.addEventListener('click',()=>sel(i));bh.appendChild(b);btns.push(b);});
+  function sel(i){groups.forEach((g,j)=>g.classList.toggle('on',i===j));btns.forEach((b,j)=>b.setAttribute('aria-pressed',String(i===j)));
+    const ph=PH[i];$('phInfo').innerHTML='<div class="kicker">'+ph.id+'</div><h3>'+ph.n.split(' · ')[1]+'</h3><p>'+ph.t+'</p><p class="sub">'+ph.w+'</p>';}
+  sel(2);
+})();
+
+/* =====================================================================
+   03  Spot it gallery + quiz
+   time-varying patterns: f(t) returns params at strip time t (s); loop 24 s
+   ===================================================================== */
+const PATS=[
+  {id:'normal',n:'Normal',sp:98,rr:12,f:t=>({et:38,k:.035}),
+   see:'Square box: flat baseline at zero, sharp upstroke, flat plateau, sharp downstroke.',think:'Tube in the trachea, patient ventilated and perfused.',doo:'Trend it. Know this patient’s gap to PaCO₂ from the last ABG.',sev:'ok'},
+  {id:'shark',n:'Shark fin (obstruction)',sp:93,rr:20,f:t=>({et:44,k:.38,slope:.35}),
+   see:'Slow, sloped upstroke that never flattens. The number may still read normal.',think:'Bronchospasm, secretions, kinked or bitten tube, COPD, asthma, auto-PEEP.',doo:'Check tube for kinks or biting, listen, suction if indicated, call RT.',sev:'now'},
+  {id:'hypo',n:'Rising (hypoventilation)',sp:95,rr:8,f:t=>({et:38+Math.min(1,t/20)*18,k:.04}),
+   see:'Normal shape, each plateau a little taller.',think:'Ventilation down (rate, oversedation) or metabolism up (fever, shivering, bicarb).',doo:'Check vent rate and volumes, temperature; ABG; notify per order.',sev:'fixit'},
+  {id:'hyper',n:'Falling (hyperventilation)',sp:99,rr:24,f:t=>({et:36-Math.min(1,t/20)*14,k:.035}),
+   see:'Normal shape, plateaus shrinking, rate up.',think:'Pain, anxiety, vent rate up, or falling cardiac output.',doo:'Check perfusion first, then pain/sedation and vent settings.',sev:'fixit'},
+  {id:'rebreath',n:'Rebreathing (raised baseline)',sp:96,rr:14,f:t=>({et:44+Math.min(1,t/20)*6,base:4+Math.min(1,t/20)*8,k:.04}),
+   see:'Baseline lifts off zero and keeps climbing.',think:'Exhalation valve, short expiratory time, wet sampling line or sensor.',doo:'Call RT, check the line and filter for water. Never flush the line.',sev:'fixit'},
+  {id:'cleft',n:'Curare cleft',sp:97,rr:14,f:t=>({et:38,k:.035,cleft:.45}),
+   see:'A notch in the plateau.',think:'Patient effort against the vent; paralytic or sedation wearing off.',doo:'Assess sedation and synchrony; train-of-four if on a paralytic; call RT.',sev:'fixit'},
+  {id:'loss',n:'Sudden loss (tube out / disconnect)',sp:97,rr:14,f:t=>((t%24)<7?{et:38,k:.035}:{et:0,apnea:true}),
+   see:'Normal breaths, then a flat line at zero. SpO₂ still normal.',think:'Displaced or esophageal tube, disconnect, total obstruction, apnea, arrest.',doo:'Look at the patient. Check tube depth and circuit. Bag with 100% O₂. Call RT and provider STAT.',sev:'now'},
+  {id:'arrest',n:'Exponential fall (perfusion collapse)',sp:90,rr:14,f:t=>({et:38*Math.exp(-Math.max(0,(t%24)-4)/4)+1.5,k:.035}),
+   see:'Good shape, but each breath shorter than the last over seconds to minutes.',think:'Cardiac arrest, massive PE, sudden hemorrhage or hypotension.',doo:'Pulse, BP, rhythm now. Pulseless: CPR and call the code.',sev:'now'},
+  {id:'leak',n:'Leak (low, sagging plateau)',sp:96,rr:14,f:t=>({et:27,k:.05,sag:.55,ragged:.5}),
+   see:'Low, uneven breaths; plateau sags early.',think:'Cuff leak, loose or cracked sampling line, water in the line.',doo:'Listen at the mouth, check connections, RT for cuff pressure.',sev:'fixit'}
+];
+const patC=$('patCanvas');const patSw=new Sweeper(patC,{max:60});const patClock=new BreathClock();
+let cur=PATS[0],patT=0,hide=false;const patBtns=[];
+const ph=$('patBtns');
+PATS.forEach((p,i)=>{const b=document.createElement('button');b.className='mbtn'+(p.sev==='now'?' prob':'');b.textContent=(i+1)+' · '+p.n.split(' (')[0];b.dataset.full=p.n;b.dataset.num=String(i+1);
+  b.addEventListener('click',()=>{setPat(i);if(quizOn)toggleQuiz(false);});ph.appendChild(b);patBtns.push(b);});
+function patInfo(){
+  const p=cur;const chip=p.sev==='now'?'<span class="chip now">Act now</span>':p.sev==='fixit'?'<span class="chip fix">Fix &amp; watch</span>':'<span class="chip ok">Normal</span>';
+  $('patInfo').innerHTML='<div class="tag lbl-hide">'+chip+'</div><h3 class="lbl-hide">'+p.n+'</h3><dl class="std"><dt class="s">See</dt><dd class="lbl-hide">'+p.see+'</dd><dt class="t">Think</dt><dd class="lbl-hide">'+p.think+'</dd><dt class="d">Do</dt><dd class="lbl-hide">'+p.doo+'</dd></dl>';
+  $('patTag').textContent='CO₂ · '+p.n;
+}
+function setPat(i){cur=PATS[i];patT=0;patSw.reset();patClock.phase=0.34;patClock.peak=0;
+  patBtns.forEach((b,j)=>b.setAttribute('aria-pressed',String(i===j)));patInfo();$('patSp').textContent=cur.sp;}
+patClock.onBreath=(pk,rr)=>{$('patEt').textContent=cur.f(patT).apnea?'0':Math.round(pk);$('patRR').textContent=cur.f(patT).apnea?'0':Math.round(rr);
+  const al=$('patAlarm');const lo=pk<30||cur.f(patT).apnea,hi=pk>50;al.classList.toggle('on',lo||hi);al.textContent=cur.f(patT).apnea?'APNEA':hi?'EtCO₂ HIGH':'EtCO₂ LOW';};
+$('patRestart').addEventListener('click',()=>{patT=0;patSw.reset();});
+addLoop(patC,dt=>{patSw.step(dt,()=>{const sdt=1/(patSw.w/patSw.opts.window);patT+=sdt;if(patT>24&&cur.id!=='loss'&&cur.id!=='arrest')patT=24;if((cur.id==='loss'||cur.id==='arrest')&&patT>24){patT=0;}
+  const q=Object.assign({rr:cur.rr,base:0},cur.f(patT));return patClock.sample(sdt,q);});patSw.draw();});
+$('hideBtn').addEventListener('click',e=>{hide=!hide;$('spot').classList.toggle('hidelabels',hide);e.currentTarget.setAttribute('aria-pressed',String(hide));
+  patBtns.forEach(b=>b.textContent=hide?'Pattern '+b.dataset.num:b.dataset.num+' · '+b.dataset.full.split(' (')[0]);});
+/* quiz */
+let quizOn=false,qRight=0,qTotal=0,qAns=null;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function nextQ(){
+  let idx=Math.floor(Math.random()*PATS.length);if(idx===qAns)idx=(idx+1)%PATS.length;qAns=idx;setPat(idx);
+  patBtns.forEach(b=>b.setAttribute('aria-pressed','false'));
+  const opts=shuffle([idx].concat(shuffle(PATS.map((_,i)=>i).filter(i=>i!==idx)).slice(0,3)));
+  const host=$('quizOpts');host.innerHTML='';
+  opts.forEach(i=>{const b=document.createElement('button');b.className='mbtn';b.textContent=PATS[i].n;
+    b.addEventListener('click',()=>{if(host.dataset.done)return;host.dataset.done='1';qTotal++;
+      if(i===qAns){qRight++;b.classList.add('right');}else{b.classList.add('wrong');[...host.children].forEach((c,k)=>{if(opts[k]===qAns)c.classList.add('right');});}
+      $('spot').classList.remove('hidelabels');
+      $('quizScore').innerHTML=qRight+' of '+qTotal+' correct · <button class="mbtn" id="qNext" style="margin-left:8px">Next strip</button>';
+      $('qNext').addEventListener('click',()=>{delete host.dataset.done;$('spot').classList.add('hidelabels');nextQ();});});
+    host.appendChild(b);});
+  $('quizScore').textContent=qTotal?qRight+' of '+qTotal+' correct':'Watch the strip, then pick.';
+}
+function toggleQuiz(on){quizOn=on;$('quiz').classList.toggle('on',on);$('quizBtn').setAttribute('aria-pressed',String(on));
+  $('spot').classList.toggle('hidelabels',on||hide);if(on){qRight=0;qTotal=0;nextQ();}}
+$('quizBtn').addEventListener('click',()=>toggleQuiz(!quizOn));
+setPat(0);
+
+/* =====================================================================
+   04  Trouble filters
+   ===================================================================== */
+const tf=$('tFilters');
+tf.querySelectorAll('.mbtn').forEach(b=>b.addEventListener('click',()=>{const f=b.dataset.f;
+  tf.querySelectorAll('.mbtn').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  document.querySelectorAll('#tCards .tcard').forEach(c=>c.hidden=!(f==='all'||c.dataset.sev===f));}));
+
+/* =====================================================================
+   05  CPR & ROSC
+   sim minutes: 10 s real = 1 min. trend window 10 min.
+   ===================================================================== */
+const QN=['None','Poor','Good','Excellent'],QE=[3,8,17,26];
+const C={min:0,q:2,swapAt:0,state:'arrest',events:[],trend:[],et:17,roscAt:null};
+const trC=$('cprTrend'),lvC=$('cprLive');const lvSw=new Sweeper(lvC,{max:60,lines:[{v:10,c:'#D0021B',label:'10'},{v:20,c:'#E8B400',label:'20'}]});
+const lvClock=new BreathClock();
+function cprLog(t){$('cprLog').textContent=t;}
+function targetEt(){
+  const m=C.min;
+  if(C.state==='rosc'){const s=m-C.roscAt;return s<1.2?46-4*s:40;}
+  let base=QE[C.q];
+  const since=m-C.swapAt;const fat=C.q>0?Math.min(0.4,Math.max(0,since-1.5)*0.22):0; /* fatigue after ~1.5-2 min */
+  base*=1-fat;
+  C.events.forEach(e=>{const s=m-e.t;if(e.k==='epi'&&s>0&&s<2.5)base-=3*Math.sin(Math.PI*s/2.5);if(e.k==='bicarb'&&s>0&&s<1.5)base+=11*Math.exp(-s*1.8);});
+  return Math.max(1,base);
+}
+function cprStep(dt){
+  C.min+=dt/10;
+  const tg=targetEt();C.et+=(tg-C.et)*Math.min(1,dt*1.4);
+  if(!C.trend.length||C.min-C.trend[C.trend.length-1][0]>0.02)C.trend.push([C.min,C.et]);
+  while(C.trend.length&&C.trend[0][0]<C.min-10)C.trend.shift();
+  const mm=Math.floor(C.min),ss=Math.floor((C.min-mm)*60);$('cprClock').textContent=String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+  $('cprEt').textContent=Math.round(C.et);
+  const al=$('cprAlarm');al.classList.toggle('on',C.state==='arrest'&&C.et<10);
+}
+function drawTrend(){
+  const g=trC.getContext('2d'),r=trC.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  const w=Math.max(200,Math.round(r.width)),h=Math.max(80,Math.round(r.height));
+  if(trC.width!==w*dpr||trC.height!==h*dpr){trC.width=w*dpr;trC.height=h*dpr;}
+  g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,w,h);
+  const max=60,pad=10,y=v=>h-pad-(v/max)*(h-pad*2);
+  g.font='600 10px "Source Sans 3",sans-serif';
+  g.strokeStyle='#1A2027';for(let v=0;v<=60;v+=20){g.beginPath();g.moveTo(0,y(v)+.5);g.lineTo(w,y(v)+.5);g.stroke();g.fillStyle='#4A5561';g.fillText(v,2,y(v)-2);}
+  [[10,'#D0021B','10 minimum'],[20,'#E8B400','20 ideal']].forEach(L=>{g.setLineDash([5,5]);g.strokeStyle=L[1];g.beginPath();g.moveTo(0,y(L[0])+.5);g.lineTo(w,y(L[0])+.5);g.stroke();g.setLineDash([]);g.fillStyle=L[1];g.fillText(L[2],w-g.measureText(L[2]).width-4,y(L[0])-3);});
+  const t0=Math.max(0,C.min-10);const x=t=>((t-t0)/10)*w;
+  C.events.forEach(e=>{if(e.t<t0)return;g.strokeStyle='#3A4450';g.beginPath();g.moveTo(x(e.t)+.5,pad);g.lineTo(x(e.t)+.5,h-pad);g.stroke();g.fillStyle='#8C96A3';g.fillText(e.lab,x(e.t)+3,pad+9);});
+  g.fillStyle='#F5D90A';
+  C.trend.forEach(p=>{const bw=Math.max(1.5,w/600);g.fillRect(x(p[0]),y(p[1]),bw,h-pad-y(p[1]));});
+}
+function cprEvent(k,lab){C.events.push({t:C.min,k,lab});}
+$('cprQ').addEventListener('input',e=>{C.q=+e.target.value;$('cprQo').textContent=QN[C.q];
+  if(C.state==='arrest')cprLog(C.q===0?'Compressions stopped. EtCO₂ falls toward zero. No flow, no CO₂ delivery.':C.q===1?'Shallow, slow compressions. EtCO₂ under 10: push harder and faster, allow full recoil.':C.q===2?'Good compressions. Aim to keep EtCO₂ at 20 or above.':'Excellent compressions: depth, rate, recoil all on target.');});
+$('cprSwap').addEventListener('click',()=>{C.swapAt=C.min;cprEvent('swap','swap');cprLog('Fresh compressor. Watch EtCO₂ climb back up. Fatigue is why we rotate every 2 minutes.');});
+$('cprEpi').addEventListener('click',()=>{if(C.state!=='arrest')return;cprEvent('epi','epi');cprLog('Epinephrine given. A brief EtCO₂ dip can follow; don’t read it as worse compressions.');});
+$('cprBicarb').addEventListener('click',()=>{if(C.state!=='arrest')return;cprEvent('bicarb','bicarb');cprLog('Bicarb releases CO₂: short spike, then back down. This is not ROSC.');});
+$('cprRosc').addEventListener('click',()=>{if(C.state==='rosc')return;C.state='rosc';C.roscAt=C.min;cprEvent('rosc','ROSC');cprLog('Abrupt, sustained jump in EtCO₂. Possible ROSC: confirm at the next rhythm/pulse check. Then settle ventilation; don’t chase the high number by bagging faster.');});
+$('cprRearrest').addEventListener('click',()=>{if(C.state!=='rosc')return;C.state='arrest';C.swapAt=C.min;cprEvent('re','re-arrest');cprLog('Re-arrest. EtCO₂ drops off a cliff. Back on the chest.');});
+$('cprReset').addEventListener('click',()=>{Object.assign(C,{min:0,q:2,swapAt:0,state:'arrest',events:[],trend:[],et:17,roscAt:null});$('cprQ').value=2;$('cprQo').textContent='Good';lvSw.reset();cprLog('Code reset. Compressions on.');});
+addLoop(lvC,dt=>{cprStep(dt);lvSw.step(dt,()=>{const sdt=1/(lvSw.w/lvSw.opts.window);
+  const cpr=C.state==='arrest'&&C.q>0;
+  const p={et:C.et,rr:C.state==='rosc'?14:10,k:C.state==='rosc'?.035:.09,slope:C.state==='rosc'?.08:.05,base:0};
+  let v=lvClock.sample(sdt,p);
+  if(cpr){const tt=lvSw.t;v+=Math.max(0,Math.sin(tt*2*Math.PI*1.8))*0.9;} /* compression oscillation ~110/min */
+  return v;});lvSw.draw();drawTrend();});
+
+/* =====================================================================
+   06  Cases
+   ===================================================================== */
+const CASES=[
+  {t:'Case 1 · The drifting number',ctx:'You float to CVICU. Post-op CABG, intubated, 3 hours out of the OR. You took report at EtCO₂ 37.',vit:[['EtCO₂','37 → 26 over 40 min'],['RR (vent)','14, unchanged'],['MAP','58'],['HR','122 ST'],['Chest tube','280 mL last hour'],['Temp','36.1']],
+   p:{et:26,rr:14,k:.035},
+   steps:[
+    {q:'The waveform shape is normal. Which lever moved?',o:[['Ventilation: the patient is overbreathing',0],['Perfusion: less CO₂ is reaching the lungs',1],['Metabolism: he’s cooling down',0]],
+     fb:['Vent rate is unchanged and he’s sedated. Overbreathing doesn’t fit.','Yes. Falling EtCO₂ with a normal shape, low MAP, tachycardia, and high chest tube output: output is dropping.','Mild hypothermia trims EtCO₂ a little, but not 11 mmHg in 40 minutes with this MAP.']},
+    {q:'Your next move?',o:[['Lower the EtCO₂ alarm limit so it stops alarming',0],['Assess for bleeding and tamponade, notify the surgical team now',1],['Ask RT to decrease the vent rate to bring EtCO₂ up',0]],
+     fb:['Silencing the messenger. The number is telling you about perfusion.','Right. Chest tube output, hemodynamics, and the surgeon. EtCO₂ is acting as a cardiac output trend here.','Changing ventilation treats the number, not the patient. PaCO₂ may already be fine; the gap widened.']}
+   ]},
+  {t:'Case 2 · The quiet turn',ctx:'Medical ICU float. You and the PCT turn a large patient for a linen change. As you lay her back, the monitor changes.',vit:[['EtCO₂','35 → 0, flat'],['SpO₂','97%'],['HR','104'],['Vent','low exhaled volume alarm']],
+   p:{et:0,apnea:true,rr:14},
+   steps:[
+    {q:'SpO₂ is still 97%. What’s the most likely problem?',o:[['The EtCO₂ sensor got bumped; SpO₂ proves she’s fine',0],['The tube is dislodged or disconnected',1],['She stopped making CO₂',0]],
+     fb:['SpO₂ lags by minutes, especially with oxygen on board. A flat line after a turn is the tube until proven otherwise.','Yes. Turns are when tubes move. Flat EtCO₂ plus a low-volume alarm is displacement or disconnect until proven otherwise.','CO₂ production doesn’t stop. If the patient has a pulse, a flat line is an airway or circuit problem.']},
+    {q:'First action?',o:[['Look at the patient: chest rise, tube depth at the lip, circuit connections',1],['Replace the sampling line',0],['Wait for the next SpO₂ reading to decide',0]],
+     fb:['Right. Patient first, then trace the circuit. Can’t confirm the tube: bag with 100% O₂ and call RT and the provider STAT.','Equipment is the last thing to blame, not the first.','Waiting for SpO₂ to fall wastes the minutes EtCO₂ just gave you.']}
+   ]},
+  {t:'Case 3 · Same settings, higher number',ctx:'Neuro ICU float. Septic patient, intubated, AC mode. Vent settings haven’t changed all shift.',vit:[['EtCO₂','38 → 49 over 2 h'],['Temp','39.6 °C'],['Shivering','yes'],['RR','16 set / 16 actual'],['MAP','72']],
+   p:{et:49,rr:16,k:.04},
+   steps:[
+    {q:'Rate and volume haven’t changed. Which lever moved?',o:[['Metabolism: fever and shivering are making more CO₂',1],['Perfusion: cardiac output fell',0],['Ventilation: she’s hypoventilating',0]],
+     fb:['Yes. Same minute ventilation, more CO₂ produced.','Falling output lowers EtCO₂; this went up.','She’s on AC with set rate = actual rate; her ventilation is fixed.']},
+    {q:'Best plan?',o:[['Treat the fever and shivering per orders, get an ABG, notify per the order’s parameters',1],['Ask RT to double the rate right away',0],['Ignore it; EtCO₂ under 50 is fine',0]],
+     fb:['Right. Fix the cause, check the ABG for the true PaCO₂, and follow the notify parameters in the order (CP 3-170).','Changing the vent may be needed later, but the provider and RT decide that with an ABG; treat the cause first.','The trend matters more than any one line. And shivering raises oxygen demand too.']}
+   ]}
+];
+(function(){
+  const host=$('caseHost');
+  CASES.forEach((cs,ci)=>{
+    const el=document.createElement('article');el.className='case';
+    let h='<div class="kicker">'+cs.t.split(' · ')[0]+'</div><h3>'+cs.t.split(' · ')[1]+'</h3><p>'+cs.ctx+'</p><div class="vit">'+cs.vit.map(v=>'<div><span>'+v[0]+'</span>'+v[1]+'</div>').join('')+'</div><canvas aria-hidden="true"></canvas>';
+    cs.steps.forEach((st,si)=>{h+='<div class="step"'+(si?' hidden':'')+'><b>'+st.q+'</b><div class="opts">'+st.o.map((o,oi)=>'<button class="mbtn" data-o="'+oi+'">'+o[0]+'</button>').join('')+'</div><div class="fb" hidden></div></div>';});
+    el.innerHTML=h;host.appendChild(el);
+    el.querySelectorAll('.step').forEach((stEl,si)=>{
+      const st=cs.steps[si];
+      stEl.querySelectorAll('.opts .mbtn').forEach(b=>b.addEventListener('click',()=>{
+        const oi=+b.dataset.o,ok=st.o[oi][1]===1;
+        stEl.querySelectorAll('.opts .mbtn').forEach(x=>x.classList.remove('right','wrong'));
+        b.classList.add(ok?'right':'wrong');
+        const fb=stEl.querySelector('.fb');fb.hidden=false;fb.className='fb'+(ok?'':' bad');fb.textContent=st.fb[oi];
+        if(ok){const nx=stEl.nextElementSibling;if(nx&&nx.classList.contains('step'))nx.hidden=false;}
+      }));
+    });
+    const cv=el.querySelector('canvas');const sw=new Sweeper(cv,{max:60});const ck=new BreathClock();
+    sw.step(11,()=>ck.sample(1/(sw.w/sw.opts.window),Object.assign({base:0},cs.p)));
+    addLoop(cv,dt=>{sw.step(dt,()=>ck.sample(1/(sw.w/sw.opts.window),Object.assign({base:0},cs.p)));sw.draw();});
+  });
+})();
+
+})();
+</script>
+</body>
+</html>
